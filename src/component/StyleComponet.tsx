@@ -4,7 +4,7 @@ import { Layout } from 'antd';
 const { Header } = Layout;
 
 export const MainDiv = styled.div`
-   width: 90%;
+   width: 98%;
    height: 100vh;
    margin: 0 auto;
 `;
