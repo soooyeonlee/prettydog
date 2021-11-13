@@ -19,3 +19,11 @@ export const MenuDiv = styled.div`
    background : #fff;
    align-items : center;
 `;
+
+export const CardDiv = styled.div`
+   border-bottom: 1px solid #f0f0f0;
+   height : 40px;
+   display : flex;
+   align-items : center;
+   padding-left : 5px;
+`;
