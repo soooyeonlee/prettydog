@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/prettydog/static/css/main.5c14179c.chunk.css",
-    "main.js": "/prettydog/static/js/main.ff47b6ab.chunk.js",
-    "main.js.map": "/prettydog/static/js/main.ff47b6ab.chunk.js.map",
+    "main.js": "/prettydog/static/js/main.1c2da621.chunk.js",
+    "main.js.map": "/prettydog/static/js/main.1c2da621.chunk.js.map",
     "runtime-main.js": "/prettydog/static/js/runtime-main.9527eaf0.js",
     "runtime-main.js.map": "/prettydog/static/js/runtime-main.9527eaf0.js.map",
     "static/css/2.a95be28f.chunk.css": "/prettydog/static/css/2.a95be28f.chunk.css",
@@ -21,6 +21,6 @@
     "static/css/2.a95be28f.chunk.css",
     "static/js/2.21364be1.chunk.js",
     "static/css/main.5c14179c.chunk.css",
-    "static/js/main.ff47b6ab.chunk.js"
+    "static/js/main.1c2da621.chunk.js"
   ]
 }
