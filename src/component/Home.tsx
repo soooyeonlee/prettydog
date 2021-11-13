@@ -1,11 +1,86 @@
 import 'antd/dist/antd.css';
 import { CardDiv, MainDiv, MainHeader, MenuDiv } from './StyleComponet';
 import { SearchOutlined ,PlusCircleOutlined} from '@ant-design/icons';
-import {Menu, Input, Table, Card, Row, Col, Upload,DatePicker ,Checkbox, Button,InputNumber,Switch } from 'antd';
+import locale from 'antd/lib/date-picker/locale/ko_KR';
+import {Menu, Input, Table, Card, Row, Col, Upload,DatePicker , Button,InputNumber,Switch,Radio } from 'antd';
 import logo from '../img/testimg.png';
+import BuyListPopup from './BuyListPopup';
+import { useState } from 'react';
+import OwnerSearchPopup from './OwnerSearchPopup';
+import CutHistoryPopup from './CutHistoryPopup';
+import BuyDetailPopup from './BuyDetailPopup';
+import BlackListPopup from './BlackListPopup';
 const { TextArea } = Input;
-const { Search } = Input;
 export default function Home(){
+    const [showOwnerSearchPopup,setShowOwnerSearchPopup] = useState<boolean>(false);
+    const [showBuyListPopup , setShowBuyListPopup] = useState<boolean>(false);
+    const [showBuyDetailPopup , setShowBuyDetailPopup] = useState<boolean>(false);
+    const [showCutHistoryPopup, setShowCutHistoryPopup] = useState<boolean>(false);
+    const [showBlackListPopup, setShowBlackListPopup] = useState<boolean>(false);
+
+    /**
+     * 보호자,강아지 검색 팝업
+     */
+    const OpenOwnerSearchPopup = () => {
+        setShowOwnerSearchPopup(true);
+    }
+
+    const CloseOwnerSearchPopup = () => {
+        setShowOwnerSearchPopup(false);
+    }
+
+    /**
+     * 구매목록 팝업
+     */
+    const OpenBuyListPopup  = () => {
+        setShowBuyListPopup(true);
+    }
+    const CloseBuyListPopup = () => {
+        setShowBuyListPopup(false);
+    }
+
+    /**
+     * 구매목록 상세
+     */
+    
+    const OpenBuyDetailPopup = () => {
+        setShowBuyDetailPopup(true);
+    }
+
+    const CloseBuyDetailPopup = () => {
+        setShowBuyDetailPopup(false);
+    }
+    
+    /**
+     * 구매목록 리스트 더블클릭
+     */
+    const dbOnclickBuyList = (record : Object ,rowIndex: number | undefined)=> {
+        OpenBuyDetailPopup();
+    }
+
+    /**
+     * 미용기록 팝업
+     */
+    const OpenCutHistoryPopup = () => {
+        setShowCutHistoryPopup(true);
+    }
+
+    const CloseCutHistoryPopup = () => {
+        setShowCutHistoryPopup(false);
+    }
+
+    /**
+     * 블랙리스트 명단 팝업
+     */
+
+    const OpenBlackListPopup = () => {
+        setShowBlackListPopup(true);
+    }
+
+    const CloseBlackListPopup = () => {
+        setShowBlackListPopup(false);
+    }
+
     const dogInfoColumns = [
         {
             title : "강아지 이름",
@@ -38,6 +113,7 @@ export default function Home(){
     const buyInfoColumns = [
         {
             title : "구매 날짜",
+            width: '40%',
             dataIndex : "buy_date",
             key : "petbuy_date_nm"
         },
@@ -87,15 +163,41 @@ export default function Home(){
             key: '3',
             cut_date : '2021-11-13'
         },
+        {
+            key: '4',
+            cut_date : '2021-09-13'
+        },
+        {
+            key: '5',
+            cut_date : '2021-10-13'
+        },
+        {
+            key: '6',
+            cut_date : '2021-11-13'
+        },{
+            key: '7',
+            cut_date : '2021-09-13'
+        },
+        {
+            key: '8',
+            cut_date : '2021-10-13'
+        },
+        {
+            key: '9',
+            cut_date : '2021-11-13'
+        },{
+            key: '10',
+            cut_date : '2021-09-13'
+        }
     ]
-      
-
-    const onSearch  = () => {
-        
-    }
 
     return(
         <>
+        <OwnerSearchPopup CloseOwnerSearchPopup={CloseOwnerSearchPopup} showOwnerSearchPopup={showOwnerSearchPopup}/>
+        <BuyListPopup CloseBuyListPopup={CloseBuyListPopup} showBuyListPopup={showBuyListPopup}/>
+        <CutHistoryPopup CloseCutHistoryPopup={CloseCutHistoryPopup} showCutHistoryPopup={showCutHistoryPopup}/>
+        <BuyDetailPopup CloseBuyDetailPopup={CloseBuyDetailPopup} showBuyDetailPopup={showBuyDetailPopup}/>
+        <BlackListPopup CloseBlackListPopup={CloseBlackListPopup} showBlackListPopup={showBlackListPopup}/>
         <MainDiv>
             <MainHeader>
                 이뻐진개
@@ -113,12 +215,12 @@ export default function Home(){
             <div style={{display : "flex", justifyContent : "space-between"}}>
                 <div>
                     <Input placeholder="보호자/강아지 이름검색" style={{width : "300px"}}/>
-                    <Button type="primary"><SearchOutlined/></Button>
+                    <Button type="primary" onClick={OpenOwnerSearchPopup}><SearchOutlined/></Button>
                 </div>
                 <div>
                     <Button style={{marginRight : "5px"}} type="primary">고객등록</Button>
                     <Button style={{marginRight : "5px"}} type="primary">애견등록</Button>
-                    <Button style={{marginRight : "5px"}} type="primary">블랙리스트 명단</Button>
+                    <Button style={{marginRight : "5px"}} type="primary" onClick={OpenBlackListPopup}>블랙리스트 명단</Button>
                 </div>
             </div>
             <Row>
@@ -137,7 +239,12 @@ export default function Home(){
                                 </Row>
                                 <Row style={{marginBottom : "5px"}}>
                                     <Col span={5}>성별 :</Col>
-                                    <Col><Input placeholder="성별" /></Col>
+                                    <Col>
+                                        <Radio.Group >
+                                            <Radio value={1}>남</Radio>
+                                            <Radio value={2}>여</Radio>
+                                        </Radio.Group>
+                                    </Col>
                                 </Row>
                                 <Row style={{marginBottom : "5px"}}>
                                     <Col span={5}>주소 :</Col>
@@ -153,11 +260,21 @@ export default function Home(){
                                 </Row>
                                 <Row style={{marginBottom : "5px"}}>
                                     <Col span={5}>성별 :</Col>
-                                    <Col><Input placeholder="성별" /></Col>
+                                    <Col>
+                                        <Radio.Group >
+                                            <Radio value={1}>남</Radio>
+                                            <Radio value={2}>여</Radio>
+                                        </Radio.Group>
+                                    </Col>
                                 </Row>
                             </Col>
                             <Col span={9}>
-                                <Table size="small" pagination={false} columns={dogInfoColumns} dataSource={dogdata}/>
+                                <Table size="small" 
+                                       pagination={false}
+                                       columns={dogInfoColumns}
+                                       dataSource={dogdata}
+                                       scroll={{ y: 150 }}
+                                       style={{cursor : "pointer"}}/>
                             </Col>
                         </div>
                     </Card>
@@ -182,15 +299,22 @@ export default function Home(){
                                 </Row>
                                 <Row style={{marginBottom : "5px"}}>
                                     <Col span={5}>성별 :</Col>
-                                    <Col><Input placeholder="성별" /></Col>
+                                    <Col>
+                                        <Radio.Group >
+                                            <Radio value={1}>남</Radio>
+                                            <Radio value={2}>여</Radio>
+                                        </Radio.Group>
+                                    </Col>
                                 </Row>
                                 <Row style={{marginBottom : "5px"}}>
                                     <Col span={5}>나이 :</Col>
-                                    <Col><Input placeholder="나이" /></Col>
+                                    <Col>
+                                        <Input placeholder="나이" />
+                                    </Col>
                                 </Row>
                                 <Row style={{marginBottom : "5px"}}>
                                     <Col span={5}>생일 :</Col>
-                                    <Col><DatePicker/></Col>
+                                    <Col><DatePicker locale={locale}/></Col>
                                 </Row>
                             </Col>
                         </div>
@@ -199,10 +323,25 @@ export default function Home(){
                 <Col span={5} style={{border: "1px solid #f0f0f0"}}>
                     <CardDiv>
                         구매목록
-                        <Button size="small" type="primary" style={{marginLeft : "5px"}} icon={<PlusCircleOutlined/>}/>
+                        <Button size="small"
+                                type="primary"
+                                style={{marginLeft : "5px"}}
+                                icon={<PlusCircleOutlined/>}
+                                onClick = {OpenBuyListPopup}/>
                     </CardDiv>
                     <Card size="small" bordered={false}>
-                        <Table pagination={false} size="small" columns={buyInfoColumns} dataSource={buydata}/>
+                        <Table pagination={false}
+                               size="small"
+                               columns={buyInfoColumns}
+                               dataSource={buydata}
+                               scroll={{ y: 150 }}
+                               style={{cursor : "pointer"}}
+                               onRow={(record, rowIndex) => {
+                                return {
+                                  onDoubleClick: event => {dbOnclickBuyList(record, rowIndex)}
+                                };
+                              }}
+                              />
                     </Card>
                 </Col>
             </Row>
@@ -237,7 +376,11 @@ export default function Home(){
                 <Col span={14} style={{border: "1px solid #f0f0f0"}}>
                     <CardDiv>
                         미용 기록
-                        <Button size="small" type="primary" style={{marginLeft : "5px"}} icon={<PlusCircleOutlined/>}/>
+                        <Button size="small" 
+                                type="primary"
+                                style={{marginLeft : "5px"}}
+                                icon={<PlusCircleOutlined/>}
+                                onClick={OpenCutHistoryPopup}/>
                     </CardDiv>
                     <Card size="small" bordered={false}>
                         <div style={{display : "flex",width : "100%"}}>
@@ -247,6 +390,8 @@ export default function Home(){
                                 pagination={false}
                                 columns={cutInfoColumns}
                                 dataSource = {cutdata}
+                                scroll={{ y: 150 }}
+                                style={{cursor : "pointer"}}
                                 />
                             </Col>
                             <Col span={20} style={{textAlign : "center"}}>
@@ -256,9 +401,8 @@ export default function Home(){
                     </Card>
                 </Col>
             </Row>
-            <div style={{textAlign : "center", margin : "5px"}}>
+            <div style={{textAlign : "center", margin : "5px 0px 10px"}}>
                 <Button style={{marginRight : "5px"}} type="primary">저장</Button>
-                <Button type="primary">닫기</Button>
             </div>
         </MainDiv>
         </>
