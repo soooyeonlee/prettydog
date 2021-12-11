@@ -164,3 +164,23 @@ export const ButtonDiv = styled.div`
     position: fixed;
     width: 100%;
 `;
+
+export const LoginDiv = styled.div`
+   width : 100vw;
+   height :100vh;
+   display : flex;
+   align-items : center;
+   justify-content : center;
+   background : rgb(227 240 254 / 95%);
+`;
+
+export const LoginInnerDiv = styled.div`
+   width : 30vw;
+   height :30vh;
+   //background : white;
+   //border-radius : 20px;
+   //box-shadow: 10px 10px 10px grey;
+   display : flex;
+   align-items : center;
+   justify-content : center;
+`;

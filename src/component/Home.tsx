@@ -5,7 +5,7 @@ import locale from 'antd/lib/date-picker/locale/ko_KR';
 import {Menu, Input, Table, Card, Row, Col, Upload,DatePicker , Button,InputNumber,Switch,Radio } from 'antd';
 import logo from '../img/testimg.png';
 import BuyListPopup from './BuyListPopup';
-import { useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import OwnerSearchPopup from './OwnerSearchPopup';
 import CutHistoryPopup from './CutHistoryPopup';
 import BuyDetailPopup from './BuyDetailPopup';
@@ -17,7 +17,9 @@ export default function Home(){
     const [showBuyDetailPopup , setShowBuyDetailPopup] = useState<boolean>(false);
     const [showCutHistoryPopup, setShowCutHistoryPopup] = useState<boolean>(false);
     const [showBlackListPopup, setShowBlackListPopup] = useState<boolean>(false);
-
+    const [file, setFile] = useState<File>();
+    const [previewURL, setPreviewURL] = useState<any>();
+    const [preview,setPreview] = useState<any>();
     /**
      * 보호자,강아지 검색 팝업
      */
@@ -79,6 +81,38 @@ export default function Home(){
 
     const CloseBlackListPopup = () => {
         setShowBlackListPopup(false);
+    }
+
+    /**
+     * 이미지 업로드
+     */
+    const fileRef : any = useRef();
+    const imgRef : any = useRef();
+
+    useEffect(() => {
+        if(file) //처음 파일 등록하지 않았을 때를 방지
+        setPreview(<img className='img_preview' src={previewURL}></img>);
+        return () => {
+
+        }
+    }, [previewURL])
+
+    const clickUpload = () => {
+        fileRef.current.click();
+    }
+
+    const fileOnchange = (event : ChangeEvent<HTMLInputElement>) => {
+        let file : File = (event.target.files as FileList)[0];
+        let reader = new FileReader();
+
+        reader.onloadend = (e) => {
+            setFile(file);
+            setPreviewURL(reader.result);
+        }
+
+        if(file){
+            reader.readAsDataURL(file);
+        }
     }
 
     const dogInfoColumns = [
@@ -282,10 +316,12 @@ export default function Home(){
                 <Col span={9} style={{border: "1px solid #f0f0f0"}}>
                     <CardDiv>강아지 프로필</CardDiv>
                     <Card size="small" bordered={false}>
+                        <div ref={imgRef} style={{marginBottom : "3px"}}><Button type="primary" onClick={clickUpload}>사진업로드</Button></div>
+                        <input ref={fileRef} type="file" id="image" accept="image/*" onChange={fileOnchange} hidden/>
                         <div style={{display : "flex", width : "100%"}}>
                             <Col span={12} >
-                                <div style={{border : "1px solid #d9d9d9",width : "200px",height : "200px"}}>
-                                    사진업로드
+                                <div style={{border : "1px solid #d9d9d9",width : "200px",height : "200px",overflow : "auto"}}>
+                                    {preview}
                                 </div>
                             </Col>  
                             <Col span={12}>
@@ -370,7 +406,7 @@ export default function Home(){
                                 <label>회</label>
                             </Col>
                         </Row>
-                        <TextArea rows={5}/>
+                        <TextArea autoSize={true}/>
                     </Card>
                 </Col>
                 <Col span={14} style={{border: "1px solid #f0f0f0"}}>
@@ -395,7 +431,7 @@ export default function Home(){
                                 />
                             </Col>
                             <Col span={20} style={{textAlign : "center"}}>
-                                <TextArea rows={7} style={{width : "90%"}}/>
+                                <TextArea autoSize={true} style={{width : "90%"}}/>
                             </Col>
                         </div>
                     </Card>
