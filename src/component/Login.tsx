@@ -1,10 +1,23 @@
 import { Button, Typography , Checkbox, Form, Input, Row, Card } from "antd";
 import { LoginDiv, LoginInnerDiv } from "./StyleComponet";
+import service, { ResponseDatas } from "../helper/service";
 const { Title } = Typography;
 export default function Login(){
     const onFinish = (values: any) => {
         console.log('Success:', values);
+        sendLogin();
     };
+
+    const sendLogin = async() =>{
+        let result:ResponseDatas = await service('/login/token','POST', {'email':'test1@test.com', 'password':'test1234'});
+        console.log(Object(result.data));
+        console.log(Object(result.data).data.token);
+        if(result.status === 200 && result.data){
+            sessionStorage.setItem('token', Object(result.data).data.token);
+            document.location.href = "/prettydog";
+        }
+        console.log(localStorage);
+    }
     
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
