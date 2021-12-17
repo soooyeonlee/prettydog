@@ -10,13 +10,10 @@ export default function Login(){
 
     const sendLogin = async() =>{
         let result:ResponseDatas = await service('/login/token','POST', {'email':'test1@test.com', 'password':'test1234'});
-        console.log(Object(result.data));
-        console.log(Object(result.data).data.token);
         if(result.status === 200 && result.data){
             sessionStorage.setItem('token', Object(result.data).data.token);
-            document.location.href = "/prettydog";
+            document.location.href = "/";
         }
-        console.log(localStorage);
     }
     
     const onFinishFailed = (errorInfo: any) => {

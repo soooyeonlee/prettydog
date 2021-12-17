@@ -10,6 +10,7 @@ import OwnerSearchPopup from './OwnerSearchPopup';
 import CutHistoryPopup from './CutHistoryPopup';
 import BuyDetailPopup from './BuyDetailPopup';
 import BlackListPopup from './BlackListPopup';
+import service, { ResponseDatas } from '../helper/service';
 const { TextArea } = Input;
 export default function Home(){
     const [showOwnerSearchPopup,setShowOwnerSearchPopup] = useState<boolean>(false);
@@ -99,6 +100,34 @@ export default function Home(){
 
     const clickUpload = () => {
         fileRef.current.click();
+    }
+
+    /**
+     * 저장버튼 클릭
+     */
+    const clickSaveDate = () => {
+        sendSaveDate();
+    }
+
+    const sendSaveDate = async() =>{
+        let params:object = {
+            m_name : '고객명',
+            m_hp_no : '01012345678',
+            m_gender : '1',
+            m_addr1 : '주소1',
+            m_addr2 : '주소2',
+            s_name : '고객명2',
+            s_hp_no : '01012345678',
+            s_gender : '1',
+            black_yb : '',
+            noshow : '1',
+            late : '2',
+            memo : '메모',
+        }
+        let result:ResponseDatas = await service('/client','POST', params);
+        if(Object(result.data).data){
+            //Object(result.data).data.id  // 고객ID
+        }
     }
 
     const fileOnchange = (event : ChangeEvent<HTMLInputElement>) => {
@@ -438,7 +467,7 @@ export default function Home(){
                 </Col>
             </Row>
             <div style={{textAlign : "center", margin : "5px 0px 10px"}}>
-                <Button style={{marginRight : "5px"}} type="primary">저장</Button>
+                <Button style={{marginRight : "5px"}} type="primary" onClick={clickSaveDate}>저장</Button>
             </div>
         </MainDiv>
         </>

@@ -26,6 +26,15 @@ export default async function service(url:string, method:Method, requestData:Obj
     AxiosConfig.url = url;
     AxiosConfig.params = requestData;
     AxiosConfig.headers = headerObject;
-    res = await axios.request(AxiosConfig);
+    await axios.request(AxiosConfig)
+            .then(function (response){
+                res = response;
+            })
+            .catch(function (error){
+                Object(res).status = -1;
+                Object(res).error = error;
+            });
+    //res = await axios.request(AxiosConfig);
+    console.log(res);
     return res;
 };
