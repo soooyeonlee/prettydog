@@ -1,4 +1,5 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import imageCompression from 'browser-image-compression'; 
 import { ButtonDiv, CardDiv, CardPopupDiv, PetInnerDiv, PetModalDiv, SpinStyle } from "./StyleComponet";
 import { SearchOutlined ,CloseSquareTwoTone} from '@ant-design/icons';
 import locale from 'antd/lib/date-picker/locale/ko_KR';
@@ -59,19 +60,37 @@ export default function PetEnrollPopup(props : {ClosePetEnroll : () => void, sho
      const clickUpload = () => {
          fileRef.current.click();
      }
-
-     const fileOnchange = (event : ChangeEvent<HTMLInputElement>) => {
-        let file : File = (event.target.files as FileList)[0];
-        let reader = new FileReader();
-
-        reader.onloadend = (e) => {
-            setFile(file);
-            setPreviewURL(reader.result);
-        }
-
-        if(file){
-            reader.readAsDataURL(file);
-        }
+ 
+     const fileOnchange = async(event : ChangeEvent<HTMLInputElement>) => {
+         let file : File = (event.target.files as FileList)[0];
+         //let reader = new FileReader();
+ 
+         const options = {
+             maxSizeMB: 2, 
+             maxWidthOrHeight: 198
+         }
+ 
+         try {
+             const compressedFile = await imageCompression(file, options);
+             setFile(compressedFile);
+             
+             // resize된 이미지의 url을 받아 fileUrl에 저장
+             const promise = imageCompression.getDataUrlFromFile(compressedFile);
+             promise.then(result => {
+                 setPreviewURL(result);
+             })
+         }catch(error){
+             alert("이미지 사이즈가 너무 큽니다. 2MB 이하로 업로드 해주세요");
+         }
+ 
+         // reader.onloadend = (e) => {
+         //     setFile(file);
+         //     setPreviewURL(reader.result);
+         // }
+ 
+         // if(file){
+         //     reader.readAsDataURL(file);
+         // }
     }
     return(
         <>

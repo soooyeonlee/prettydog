@@ -1,4 +1,5 @@
 import 'antd/dist/antd.css';
+import imageCompression from 'browser-image-compression'; 
 import { CardDiv, MainDiv, MainHeader, MenuDiv } from './StyleComponet';
 import { SearchOutlined ,PlusCircleOutlined,DeleteOutlined} from '@ant-design/icons';
 import locale from 'antd/lib/date-picker/locale/ko_KR';
@@ -129,18 +130,36 @@ export default function Home(){
         fileRef.current.click();
     }
 
-    const fileOnchange = (event : ChangeEvent<HTMLInputElement>) => {
+    const fileOnchange = async(event : ChangeEvent<HTMLInputElement>) => {
         let file : File = (event.target.files as FileList)[0];
-        let reader = new FileReader();
+        //let reader = new FileReader();
 
-        reader.onloadend = (e) => {
-            setFile(file);
-            setPreviewURL(reader.result);
+        const options = {
+            maxSizeMB: 2, 
+            maxWidthOrHeight: 198
         }
 
-        if(file){
-            reader.readAsDataURL(file);
+        try {
+            const compressedFile = await imageCompression(file, options);
+            setFile(compressedFile);
+            
+            // resize된 이미지의 url을 받아 fileUrl에 저장
+            const promise = imageCompression.getDataUrlFromFile(compressedFile);
+            promise.then(result => {
+                setPreviewURL(result);
+            })
+        }catch(error){
+            console.log(error);
         }
+
+        // reader.onloadend = (e) => {
+        //     setFile(file);
+        //     setPreviewURL(reader.result);
+        // }
+
+        // if(file){
+        //     reader.readAsDataURL(file);
+        // }
     }
 
     /**
