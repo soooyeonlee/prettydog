@@ -1,7 +1,7 @@
 import { Button,Table } from "antd";
 import { useState } from "react";
 import { BlackModalDiv, BlackModalInnerDiv, ButtonDiv, CardPopupDiv, SpinStyle } from "./StyleComponet";
-
+import { SearchOutlined ,CloseSquareTwoTone} from '@ant-design/icons';
 export default function BlackListPopup(props : {CloseBlackListPopup : () => void, showBlackListPopup : boolean}){
     const [loading, setLoading] = useState<boolean>(false);
     const BlackColumns = [
@@ -92,17 +92,16 @@ export default function BlackListPopup(props : {CloseBlackListPopup : () => void
         <BlackModalDiv style={{display : props.showBlackListPopup ? '' : "none"}}>
             <BlackModalInnerDiv>
                 <SpinStyle spinning={loading}>
-                    <CardPopupDiv>블랙리스트 명단</CardPopupDiv>
+                    <CardPopupDiv>블랙리스트 명단
+                        <Button type="primary" icon={<CloseSquareTwoTone />} onClick={props.CloseBlackListPopup}/>
+                    </CardPopupDiv>
                     <Table
                         pagination={false}
                         columns={BlackColumns}
                         dataSource={BlackData}
                         size="small"
                         scroll={{ y: 250 }}
-                        />
-                    <ButtonDiv>
-                        <Button type="primary" onClick={props.CloseBlackListPopup}>닫기</Button>
-                    </ButtonDiv>
+                    />
                 </SpinStyle>
             </BlackModalInnerDiv>
         </BlackModalDiv>

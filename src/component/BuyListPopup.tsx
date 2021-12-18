@@ -1,6 +1,6 @@
 import { Button, Input, Table, Select,InputNumber, Tooltip } from "antd";
 import { useState } from "react";
-import { SearchOutlined ,DownOutlined} from '@ant-design/icons';
+import { SearchOutlined ,DownOutlined,CloseSquareTwoTone} from '@ant-design/icons';
 import { ButtonDiv, CardPopupDiv, BuyModalDiv, BuyModalInnerDiv, SpinStyle } from "./StyleComponet";
 import { SelectValue } from "antd/lib/select";
 const {Search} = Input;
@@ -84,7 +84,9 @@ export default function BuyListPopup(props : {CloseBuyListPopup : () => void, sh
         <BuyModalDiv style={{display : props.showBuyListPopup ? '' : "none"}}>
             <BuyModalInnerDiv>
                 <SpinStyle spinning={loading}>
-                    <CardPopupDiv>구매 입력</CardPopupDiv>
+                    <CardPopupDiv>구매 입력
+                    <Button type="primary" icon={<CloseSquareTwoTone />} onClick={props.CloseBuyListPopup}/>
+                    </CardPopupDiv>
                     <div style={{textAlign : "center", margin : "7px 0px 7px"}}>
                         <Select placeholder="제품 이름" 
                                 style={{width:'30%'}}
@@ -115,7 +117,7 @@ export default function BuyListPopup(props : {CloseBuyListPopup : () => void, sh
                         scroll={{ y: 150 }}
                         />
                     <ButtonDiv>
-                        <Button type="primary" onClick={props.CloseBuyListPopup}>닫기</Button>
+                        <Button type="primary" style={{marginRight : "5px"}}>닫기</Button>
                     </ButtonDiv>
                 </SpinStyle>
             </BuyModalInnerDiv>

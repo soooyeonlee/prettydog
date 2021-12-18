@@ -4,7 +4,7 @@ import { Layout, Spin, Card} from 'antd';
 const { Header } = Layout;
 
 export const MainDiv = styled.div`
-   width: 98%;
+   width: 1500px;
    height: 100vh;
    margin: 0 auto;
 `;
@@ -26,6 +26,8 @@ export const CardDiv = styled.div`
    display : flex;
    align-items : center;
    padding-left : 5px;
+   justify-content : space-between;
+   margin-right : 5px;
 `;
 
 export const CardPopupDiv = styled.div`
@@ -35,6 +37,8 @@ export const CardPopupDiv = styled.div`
    display : flex;
    align-items : center;
    padding-left : 5px;
+   border-radius : 10px 10px 0px 0px;
+   justify-content : space-between;
 `;
 
 /**
@@ -58,6 +62,7 @@ export const OwnerSearchModalDiv = styled.div`
 export const OwnerSearchModalInnerDiv = styled.div`
     width: 50%;
     height: 450px;
+    border-radius: 10px;
     background: #fff;
     position: absolute;
     left: 50%;
@@ -65,6 +70,53 @@ export const OwnerSearchModalInnerDiv = styled.div`
     transform: translate(-50%,-50%);
     display: inline-block;
 `;
+
+/**
+ * 고객등록 팝업
+ */
+ export const CustomerModalDiv = styled.div`
+ position: fixed;
+ width: 100%;
+ height: 100%;
+ background: #0000005a;
+ z-index: 100;
+`;
+
+export const CustomerInnerDiv = styled.div`
+  width: 500px;
+  height: 670px;
+  border-radius: 10px;
+  background: #fff;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  display: inline-block;
+`;
+
+/**
+ * 애견등록 팝업
+ */
+ export const PetModalDiv = styled.div`
+ position: fixed;
+ width: 100%;
+ height: 100%;
+ background: #0000005a;
+ z-index: 100;
+`;
+
+export const PetInnerDiv = styled.div`
+  width: 500px;
+  height: 530px;
+  border-radius: 10px;
+  background: #fff;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  display: inline-block;
+`;
+
 
 /**
  * 구매목록 추가 팝업
@@ -86,6 +138,7 @@ export const BuyModalInnerDiv = styled.div`
     top: 50%;
     transform: translate(-50%,-50%);
     display: inline-block;
+    border-radius: 10px;
 `;
 
 /**
@@ -108,6 +161,7 @@ export const BuyDetailInnerDiv = styled.div`
   top: 50%;
   transform: translate(-50%,-50%);
   display: inline-block;
+  border-radius: 10px;
 `;
 /**
  * 미용기록 추가 팝업
@@ -129,6 +183,7 @@ export const CutModalInnerDiv = styled.div`
   top: 50%;
   transform: translate(-50%,-50%);
   display: inline-block;
+  border-radius: 10px;
 `;
 
 /**
@@ -152,17 +207,19 @@ export const BlackModalInnerDiv = styled.div`
   top: 50%;
   transform: translate(-50%,-50%);
   display: inline-block;
+  border-radius: 10px;
 `;
 
 /**
  * 팝업 닫기 버튼 아래쪽 가운데 정렬
  */
 export const ButtonDiv = styled.div`
-   text-align: center;
+    text-align: center;
     margin-bottom: 0.5em;
     bottom: 0;
     position: fixed;
     width: 100%;
+    margin : 5px 0px 10px;
 `;
 
 export const LoginDiv = styled.div`

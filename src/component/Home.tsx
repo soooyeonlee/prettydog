@@ -1,6 +1,6 @@
 import 'antd/dist/antd.css';
 import { CardDiv, MainDiv, MainHeader, MenuDiv } from './StyleComponet';
-import { SearchOutlined ,PlusCircleOutlined} from '@ant-design/icons';
+import { SearchOutlined ,PlusCircleOutlined,DeleteOutlined} from '@ant-design/icons';
 import locale from 'antd/lib/date-picker/locale/ko_KR';
 import {Menu, Input, Table, Card, Row, Col, Upload,DatePicker , Button,InputNumber,Switch,Radio } from 'antd';
 import logo from '../img/testimg.png';
@@ -11,6 +11,8 @@ import CutHistoryPopup from './CutHistoryPopup';
 import BuyDetailPopup from './BuyDetailPopup';
 import BlackListPopup from './BlackListPopup';
 import service, { ResponseDatas } from '../helper/service';
+import CustomerEnrollPopup from './CustomerEnrollPopup';
+import PetEnrollPopup from './PetEnrollPopup';
 const { TextArea } = Input;
 export default function Home(){
     const [showOwnerSearchPopup,setShowOwnerSearchPopup] = useState<boolean>(false);
@@ -18,6 +20,9 @@ export default function Home(){
     const [showBuyDetailPopup , setShowBuyDetailPopup] = useState<boolean>(false);
     const [showCutHistoryPopup, setShowCutHistoryPopup] = useState<boolean>(false);
     const [showBlackListPopup, setShowBlackListPopup] = useState<boolean>(false);
+    const [showCustomerEnrollPopup,setShowCustomerEnrollPopup] = useState<boolean>(false);
+    const [showPetEnrollPopup,setShowPetEnrollPopup] = useState<boolean>(false);
+
     const [file, setFile] = useState<File>();
     const [previewURL, setPreviewURL] = useState<any>();
     const [preview,setPreview] = useState<any>();
@@ -30,6 +35,28 @@ export default function Home(){
 
     const CloseOwnerSearchPopup = () => {
         setShowOwnerSearchPopup(false);
+    }
+
+    /**
+     * 고객등록 팝업
+     */
+    const OpenCustomerEnroll = () => {
+        setShowCustomerEnrollPopup(true);
+    }
+
+    const CloseCustomerEnroll = () => {
+        setShowCustomerEnrollPopup(false);
+    }
+
+    /**
+     * 애견등록 팝업
+     */
+     const OpenPetEnroll = () => {
+        setShowPetEnrollPopup(true);
+    }
+
+    const ClosePetEnroll = () => {
+        setShowPetEnrollPopup(false);
     }
 
     /**
@@ -102,6 +129,20 @@ export default function Home(){
         fileRef.current.click();
     }
 
+    const fileOnchange = (event : ChangeEvent<HTMLInputElement>) => {
+        let file : File = (event.target.files as FileList)[0];
+        let reader = new FileReader();
+
+        reader.onloadend = (e) => {
+            setFile(file);
+            setPreviewURL(reader.result);
+        }
+
+        if(file){
+            reader.readAsDataURL(file);
+        }
+    }
+
     /**
      * 저장버튼 클릭
      */
@@ -130,25 +171,20 @@ export default function Home(){
         }
     }
 
-    const fileOnchange = (event : ChangeEvent<HTMLInputElement>) => {
-        let file : File = (event.target.files as FileList)[0];
-        let reader = new FileReader();
-
-        reader.onloadend = (e) => {
-            setFile(file);
-            setPreviewURL(reader.result);
-        }
-
-        if(file){
-            reader.readAsDataURL(file);
-        }
-    }
-
     const dogInfoColumns = [
         {
             title : "강아지 이름",
             dataIndex : "pet_nm",
             key : "pet_nm"
+        },
+        {
+            title: '',
+            dataIndex: 'key',
+            key: 'key',
+            align: 'center' as 'center',
+            render: (text : String, record : Object) => (
+                <Button type="primary" size='small' danger icon={<DeleteOutlined/>}/>
+            ),
         }
     ]
 
@@ -261,6 +297,8 @@ export default function Home(){
         <CutHistoryPopup CloseCutHistoryPopup={CloseCutHistoryPopup} showCutHistoryPopup={showCutHistoryPopup}/>
         <BuyDetailPopup CloseBuyDetailPopup={CloseBuyDetailPopup} showBuyDetailPopup={showBuyDetailPopup}/>
         <BlackListPopup CloseBlackListPopup={CloseBlackListPopup} showBlackListPopup={showBlackListPopup}/>
+        <CustomerEnrollPopup CloseCustomerEnroll={CloseCustomerEnroll} showCustomerEnrollPopup={showCustomerEnrollPopup}/>
+        <PetEnrollPopup ClosePetEnroll={ClosePetEnroll}  showPetEnrollPopup={showPetEnrollPopup}/>
         <MainDiv>
             <MainHeader>
                 이뻐진개
@@ -281,14 +319,16 @@ export default function Home(){
                     <Button type="primary" onClick={OpenOwnerSearchPopup}><SearchOutlined/></Button>
                 </div>
                 <div>
-                    <Button style={{marginRight : "5px"}} type="primary">고객등록</Button>
-                    <Button style={{marginRight : "5px"}} type="primary">애견등록</Button>
+                    <Button style={{marginRight : "5px"}} type="primary" onClick={OpenCustomerEnroll}>고객등록</Button>
+                    <Button style={{marginRight : "5px"}} type="primary" onClick={OpenPetEnroll}>애견등록</Button>
                     <Button style={{marginRight : "5px"}} type="primary" onClick={OpenBlackListPopup}>블랙리스트 명단</Button>
                 </div>
             </div>
             <Row>
                 <Col span={10} style={{border: "1px solid #f0f0f0"}}>
-                    <CardDiv>보호자 프로필</CardDiv>
+                    <CardDiv>보호자 프로필
+                        <Button icon={<DeleteOutlined />} type='primary' danger/>
+                    </CardDiv>
                     <Card size="small" bordered={false}>
                         <div style={{display : "flex", width : "100%"}}>
                             <Col span={15}>
@@ -435,7 +475,7 @@ export default function Home(){
                                 <label>회</label>
                             </Col>
                         </Row>
-                        <TextArea autoSize={true}/>
+                        <TextArea rows={5}/>
                     </Card>
                 </Col>
                 <Col span={14} style={{border: "1px solid #f0f0f0"}}>
@@ -460,7 +500,7 @@ export default function Home(){
                                 />
                             </Col>
                             <Col span={20} style={{textAlign : "center"}}>
-                                <TextArea autoSize={true} style={{width : "90%"}}/>
+                                <TextArea  rows={7} style={{width : "90%"}}/>
                             </Col>
                         </div>
                     </Card>
