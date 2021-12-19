@@ -12,7 +12,7 @@ export interface ResponseDatas {
     request? : object
 };
 
-export default async function service(url:string, method:Method, requestData:Object){
+export default async function service(url:string, method:Method, requestData:any){
     let res:Object = {};
     let headerObject:AxiosRequestHeaders = {};
     let AxiosConfig:AxiosRequestConfig = {};
@@ -20,11 +20,21 @@ export default async function service(url:string, method:Method, requestData:Obj
     if(sessionStorage.getItem('token')){
         token = sessionStorage.getItem('token');
     }
-    headerObject = {'Authorization': 'Bearer '+token};
+
+    const params = new FormData();
+    for(let key in requestData){
+        if(!requestData[key]){
+            requestData[key] = '';
+        }
+        params.append(key, requestData[key]);
+    }
+
+    headerObject = {'Authorization': 'Bearer '+token, 'Content-Type': 'multipart/form-data'};
     AxiosConfig.baseURL = BASE_URL;
     AxiosConfig.method = method;
     AxiosConfig.url = url;
-    AxiosConfig.params = requestData;
+    //AxiosConfig.params = requestData;
+    AxiosConfig.data = params;
     AxiosConfig.headers = headerObject;
     await axios.request(AxiosConfig)
             .then(function (response){
