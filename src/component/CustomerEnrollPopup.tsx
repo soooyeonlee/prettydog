@@ -2,11 +2,43 @@ import { useState } from "react";
 import { ButtonDiv, CardDiv, CardPopupDiv, CustomerInnerDiv, CustomerModalDiv, SpinStyle } from "./StyleComponet";
 import { SearchOutlined ,CloseSquareTwoTone} from '@ant-design/icons';
 import { Button, Row, Col, Card, Radio, Input, Switch, InputNumber } from "antd";
+import service, { ResponseDatas } from "../helper/service";
 const { TextArea } = Input;
 export default function CustomerEnrollPopup(props : {CloseCustomerEnroll : () => void, showCustomerEnrollPopup : boolean}) {
     const [loading, setLoading] = useState<boolean>(false);
     const ClosePopup = () => {
         props.CloseCustomerEnroll();
+    }
+
+    const clickSave = ()=>{
+        sendSave();
+    }
+
+    const sendSave = async () =>{
+        let params:object = {
+            m_name : '김기백',
+            m_hp_no : '01012345678',
+            m_gender : '1',
+            m_addr1 : '경기도 구리시',
+            m_addr2 : '체육관로 ',
+            s_name  : '홍길동',
+            s_hp_no : '01022223333',
+            s_gender : '2',
+            black_yb : '1',
+            noshow : '10',
+            late : '20',
+            memo : '메모짱',
+        };
+
+        let result:ResponseDatas = await service('/client','POST', params);
+        if(result.status === 200 && result.data){
+            console.log(result.data);
+            if(Object(result.data).data.id){
+                alert('정상적으로 저장 완료 ID='+Object(result.data).data.id);
+                console.log('정상적으로 저장 완료');
+            }
+        }
+
     }
     return (
         <>
@@ -85,7 +117,7 @@ export default function CustomerEnrollPopup(props : {CloseCustomerEnroll : () =>
                         </div>
                    </Card>
                    <ButtonDiv>
-                       <Button style={{marginRight : "5px"}} type="primary">저장</Button>
+                       <Button style={{marginRight : "5px"}} type="primary" onClick={clickSave}>저장</Button>
                    </ButtonDiv>
                 </SpinStyle>
             </CustomerInnerDiv>
