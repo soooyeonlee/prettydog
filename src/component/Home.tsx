@@ -1,9 +1,9 @@
 import 'antd/dist/antd.css';
 import imageCompression from 'browser-image-compression'; 
-import { CardDiv, MainDiv, MainHeader, MenuDiv } from './StyleComponet';
+import { CardDiv, MainDiv, MainHeader, MenuDiv, SpinStyle } from './StyleComponet';
 import { SearchOutlined ,PlusCircleOutlined,DeleteOutlined} from '@ant-design/icons';
 import locale from 'antd/lib/date-picker/locale/ko_KR';
-import {Menu, Input, Table, Card, Row, Col, Upload,DatePicker , Button,InputNumber,Switch,Radio } from 'antd';
+import {Menu, Input, Table, Card, Row, Col, Upload,DatePicker , Button,InputNumber,Switch,Radio, RadioChangeEvent } from 'antd';
 import logo from '../img/testimg.png';
 import BuyListPopup from './BuyListPopup';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
@@ -14,8 +14,12 @@ import BlackListPopup from './BlackListPopup';
 import service, { ResponseDatas } from '../helper/service';
 import CustomerEnrollPopup from './CustomerEnrollPopup';
 import PetEnrollPopup from './PetEnrollPopup';
+import { valueType } from 'antd/lib/statistic/utils';
+import Checkbox from 'antd/lib/checkbox/Checkbox';
 const { TextArea } = Input;
 export default function Home(){
+    const [loading, setLoading] = useState<boolean>(false);
+
     const [showOwnerSearchPopup,setShowOwnerSearchPopup] = useState<boolean>(false);
     const [showBuyListPopup , setShowBuyListPopup] = useState<boolean>(false);
     const [showBuyDetailPopup , setShowBuyDetailPopup] = useState<boolean>(false);
@@ -23,10 +27,62 @@ export default function Home(){
     const [showBlackListPopup, setShowBlackListPopup] = useState<boolean>(false);
     const [showCustomerEnrollPopup,setShowCustomerEnrollPopup] = useState<boolean>(false);
     const [showPetEnrollPopup,setShowPetEnrollPopup] = useState<boolean>(false);
+    const [id, setId] = useState<string>('');
+
+    const [m_name, set_m_name] = useState<string>('');
+    const [m_hp_no, set_m_hp_no] = useState<string>('');
+    const [m_gender, set_m_gender] = useState<string>('');
+    const [m_addr1, set_m_addr1] = useState<string>('');
+    const [m_addr2, set_m_addr2] = useState<string>('');
+    const [s_name, set_s_name] = useState<string>('');
+    const [s_hp_no, set_s_hp_no] = useState<string>('');
+    const [s_gender, set_s_gender] = useState<string>('');
+    const [black_yb_chk, set_black_yb_chk] = useState<boolean>(false);
+    const [black_yb, set_black_yb] = useState<string>('');
+    const [noshow, set_noshow] = useState<valueType>('');
+    const [late, set_late] = useState<valueType>('');
+    const [memo, set_memo] = useState<string>('');
 
     const [file, setFile] = useState<File>();
     const [previewURL, setPreviewURL] = useState<any>();
     const [preview,setPreview] = useState<any>();
+
+    useEffect(()=>{
+        SetInfo(id);
+    },[id])
+
+    /**
+     * 저장 후 값 세팅
+     */
+    const SetInfo = async(id : string) => {
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/client/' + id,'GET', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            if(Object(result.data).data.client){
+                set_m_name(Object(result.data).data.client.m_name);
+                set_m_hp_no(Object(result.data).data.client.m_hp_no);
+                set_m_gender(Object(result.data).data.client.m_gender);
+                set_m_addr1(Object(result.data).data.client.m_addr1);
+                set_m_addr2('');
+                set_s_name(Object(result.data).data.client.s_name);
+                set_s_hp_no(Object(result.data).data.client.s_hp_no);
+                set_s_gender(Object(result.data).data.client.s_gender);
+                set_black_yb(Object(result.data).data.client.black_yb);
+
+                if(Object(result.data).data.client.black_yb === '1'){
+                    set_black_yb_chk(true);
+                }else{
+                    set_black_yb_chk(false);   
+                }
+                
+                set_noshow(Object(result.data).data.client.late);
+                set_late(Object(result.data).data.client.noshow);
+                set_memo(Object(result.data).data.client.memo);
+            }
+        }
+    }
     /**
      * 보호자,강아지 검색 팝업
      */
@@ -113,6 +169,62 @@ export default function Home(){
     }
 
     /**
+     * 값 가져오기
+     */
+     const m_name_change = (event : ChangeEvent<HTMLInputElement>) => {
+        set_m_name(event.target.value);
+    }
+
+    const m_hp_no_change = (event : ChangeEvent<HTMLInputElement>) => {
+        set_m_hp_no(event.target.value);
+    }
+
+    const m_gender_change = (event : RadioChangeEvent) => {
+        set_m_gender(event.target.value);
+    }
+
+    const m_addr1_change = (event : ChangeEvent<HTMLInputElement>) => {
+        set_m_addr1(event.target.value);
+    }
+
+    const m_addr2_change = (event : ChangeEvent<HTMLInputElement>) => {
+        set_m_addr2(event.target.value);
+    }
+
+    const s_name_change = (event : ChangeEvent<HTMLInputElement>) => {
+        set_s_name(event.target.value);
+    }
+
+    const s_hp_change = (event : ChangeEvent<HTMLInputElement>) => {
+        set_s_hp_no(event.target.value);
+    }
+
+    const s_gender_change = (event : RadioChangeEvent) => {
+        set_s_gender(event.target.value);
+    }
+
+    const black_yb_change = (event : any) => {
+        set_black_yb_chk(event.target.checked);
+        if(event.target.checked === true){
+            set_black_yb('1');
+        }else{
+            set_black_yb('');
+        }
+    }
+
+    const noshow_change = (event : valueType) => {
+        set_noshow(event);
+    }
+    
+    const late_change = (event : valueType) => {
+        set_late(event);
+    }
+
+    const memo_change = (event : ChangeEvent<HTMLTextAreaElement>) => {
+        set_memo(event.target.value);
+    }
+
+    /**
      * 이미지 업로드
      */
     const fileRef : any = useRef();
@@ -132,7 +244,6 @@ export default function Home(){
 
     const fileOnchange = async(event : ChangeEvent<HTMLInputElement>) => {
         let file : File = (event.target.files as FileList)[0];
-        //let reader = new FileReader();
 
         const options = {
             maxSizeMB: 2, 
@@ -151,15 +262,6 @@ export default function Home(){
         }catch(error){
             console.log(error);
         }
-
-        // reader.onloadend = (e) => {
-        //     setFile(file);
-        //     setPreviewURL(reader.result);
-        // }
-
-        // if(file){
-        //     reader.readAsDataURL(file);
-        // }
     }
 
     /**
@@ -316,172 +418,175 @@ export default function Home(){
         <CutHistoryPopup CloseCutHistoryPopup={CloseCutHistoryPopup} showCutHistoryPopup={showCutHistoryPopup}/>
         <BuyDetailPopup CloseBuyDetailPopup={CloseBuyDetailPopup} showBuyDetailPopup={showBuyDetailPopup}/>
         <BlackListPopup CloseBlackListPopup={CloseBlackListPopup} showBlackListPopup={showBlackListPopup}/>
-        <CustomerEnrollPopup CloseCustomerEnroll={CloseCustomerEnroll} showCustomerEnrollPopup={showCustomerEnrollPopup}/>
+        <CustomerEnrollPopup CloseCustomerEnroll={CloseCustomerEnroll} showCustomerEnrollPopup={showCustomerEnrollPopup} setId={setId}/>
         <PetEnrollPopup ClosePetEnroll={ClosePetEnroll}  showPetEnrollPopup={showPetEnrollPopup}/>
         <MainDiv>
-            <MainHeader>
-                이뻐진개
-                <img style={{maxHeight : "100%", maxWidth : "100%"}}  src={logo}></img>
-            </MainHeader>
-            <MenuDiv>
-                <Menu mode="horizontal" style={{width :"100%"}}>
-                    <Menu.Item key={1}>메인</Menu.Item>
-                    <Menu.Item key={2}>회원관리</Menu.Item>
-                    <Menu.Item key={3}>예약관리</Menu.Item>
-                    <Menu.Item key={4}>재고관리</Menu.Item>
-                    <Menu.Item key={5}>설정</Menu.Item>
-                </Menu>
-            </MenuDiv>
-            <div style={{display : "flex", justifyContent : "space-between"}}>
-                <div>
-                    <Input placeholder="보호자/강아지 이름검색" style={{width : "300px"}}/>
-                    <Button type="primary" onClick={OpenOwnerSearchPopup}><SearchOutlined/></Button>
+            <SpinStyle spinning={loading}>
+                <MainHeader>
+                    이뻐진개
+                    <img style={{maxHeight : "100%", maxWidth : "100%"}}  src={logo}></img>
+                </MainHeader>
+                <MenuDiv>
+                    <Menu mode="horizontal" style={{width :"100%"}}>
+                        <Menu.Item key={1}>메인</Menu.Item>
+                        <Menu.Item key={2}>회원관리</Menu.Item>
+                        <Menu.Item key={3}>예약관리</Menu.Item>
+                        <Menu.Item key={4}>재고관리</Menu.Item>
+                        <Menu.Item key={5}>설정</Menu.Item>
+                    </Menu>
+                </MenuDiv>
+                <div style={{display : "flex", justifyContent : "space-between"}}>
+                    <div>
+                        <Input placeholder="보호자/강아지 이름검색" style={{width : "300px"}}/>
+                        <Button type="primary" onClick={OpenOwnerSearchPopup}><SearchOutlined/></Button>
+                    </div>
+                    <div>
+                        <Button style={{marginRight : "5px"}} type="primary" onClick={OpenCustomerEnroll}>고객등록</Button>
+                        <Button style={{marginRight : "5px"}} type="primary" onClick={OpenPetEnroll}>애견등록</Button>
+                        <Button style={{marginRight : "5px"}} type="primary" onClick={OpenBlackListPopup}>블랙리스트 명단</Button>
+                    </div>
                 </div>
-                <div>
-                    <Button style={{marginRight : "5px"}} type="primary" onClick={OpenCustomerEnroll}>고객등록</Button>
-                    <Button style={{marginRight : "5px"}} type="primary" onClick={OpenPetEnroll}>애견등록</Button>
-                    <Button style={{marginRight : "5px"}} type="primary" onClick={OpenBlackListPopup}>블랙리스트 명단</Button>
-                </div>
-            </div>
-            <Row>
-                <Col span={10} style={{border: "1px solid #f0f0f0"}}>
-                    <CardDiv>보호자 프로필
-                        <Button icon={<DeleteOutlined />} type='primary' danger/>
-                    </CardDiv>
-                    <Card size="small" bordered={false}>
-                        <div style={{display : "flex", width : "100%"}}>
-                            <Col span={15}>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>이름 :</Col>
-                                    <Col><Input placeholder="이름" /></Col>
-                                </Row>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>전화번호 :</Col>
-                                    <Col><Input placeholder="전화번호" /></Col>
-                                </Row>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>성별 :</Col>
-                                    <Col>
-                                        <Radio.Group >
-                                            <Radio value={1}>남</Radio>
-                                            <Radio value={2}>여</Radio>
-                                        </Radio.Group>
-                                    </Col>
-                                </Row>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>주소 :</Col>
-                                    <Col><Input placeholder="주소" /></Col>
-                                </Row>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>부 보호자 :</Col>
-                                    <Col><Input placeholder="부 보호자" /></Col>
-                                </Row>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>전화번호 :</Col>
-                                    <Col><Input placeholder="전화번호" /></Col>
-                                </Row>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>성별 :</Col>
-                                    <Col>
-                                        <Radio.Group >
-                                            <Radio value={1}>남</Radio>
-                                            <Radio value={2}>여</Radio>
-                                        </Radio.Group>
-                                    </Col>
-                                </Row>
-                            </Col>
-                            <Col span={9}>
-                                <Table size="small" 
-                                       pagination={false}
-                                       columns={dogInfoColumns}
-                                       dataSource={dogdata}
-                                       scroll={{ y: 150 }}
-                                       style={{cursor : "pointer"}}/>
-                            </Col>
-                        </div>
-                    </Card>
-                </Col>
-                <Col span={9} style={{border: "1px solid #f0f0f0"}}>
-                    <CardDiv>강아지 프로필</CardDiv>
-                    <Card size="small" bordered={false}>
-                        <div ref={imgRef} style={{marginBottom : "3px"}}><Button type="primary" onClick={clickUpload}>사진업로드</Button></div>
-                        <input ref={fileRef} type="file" id="image" accept="image/*" onChange={fileOnchange} hidden/>
-                        <div style={{display : "flex", width : "100%"}}>
-                            <Col span={12} >
-                                <div style={{border : "1px solid #d9d9d9",width : "200px",height : "200px",overflow : "auto"}}>
-                                    {preview}
-                                </div>
-                            </Col>  
-                            <Col span={12}>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>이름 :</Col>
-                                    <Col><Input placeholder="이름" /></Col>
-                                </Row>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>종류 :</Col>
-                                    <Col><Input placeholder="종류" /></Col>
-                                </Row>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>성별 :</Col>
-                                    <Col>
-                                        <Radio.Group >
-                                            <Radio value={1}>남</Radio>
-                                            <Radio value={2}>여</Radio>
-                                        </Radio.Group>
-                                    </Col>
-                                </Row>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>나이 :</Col>
-                                    <Col>
-                                        <Input placeholder="나이" />
-                                    </Col>
-                                </Row>
-                                <Row style={{marginBottom : "5px"}}>
-                                    <Col span={5}>생일 :</Col>
-                                    <Col><DatePicker locale={locale}/></Col>
-                                </Row>
-                            </Col>
-                        </div>
-                    </Card>
-                </Col>
-                <Col span={5} style={{border: "1px solid #f0f0f0"}}>
-                    <CardDiv>
-                        구매목록
-                        <Button size="small"
-                                type="primary"
-                                style={{marginLeft : "5px"}}
-                                icon={<PlusCircleOutlined/>}
-                                onClick = {OpenBuyListPopup}/>
-                    </CardDiv>
-                    <Card size="small" bordered={false}>
-                        <Table pagination={false}
-                               size="small"
-                               columns={buyInfoColumns}
-                               dataSource={buydata}
-                               scroll={{ y: 150 }}
-                               style={{cursor : "pointer"}}
-                               onRow={(record, rowIndex) => {
-                                return {
-                                  onDoubleClick: event => {dbOnclickBuyList(record, rowIndex)}
-                                };
-                              }}
-                              />
-                    </Card>
-                </Col>
-            </Row>
-            <Row>
-                <Col span={10} style={{border: "1px solid #f0f0f0"}}>
-                    <CardDiv>블랙리스트</CardDiv>
-                    <Card size="small" bordered={false}>
+                <Row>
+                    <Col span={10} style={{border: "1px solid #f0f0f0"}}>
+                        <CardDiv>보호자 프로필
+                            <Button icon={<DeleteOutlined />} type='primary' danger/>
+                        </CardDiv>
+                        <Card size="small" bordered={false}>
+                            <div style={{display : "flex", width : "100%"}}>
+                                <Col span={15}>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>이름 :</Col>
+                                        <Col><Input placeholder="이름" onChange={m_name_change} value={m_name}/></Col>
+                                    </Row>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>전화번호 :</Col>
+                                        <Col><Input placeholder="전화번호" onChange={m_hp_no_change} value={m_hp_no}/></Col>
+                                    </Row>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>성별 :</Col>
+                                        <Col>
+                                            <Radio.Group onChange={m_gender_change} value={m_gender}>
+                                                <Radio value={"1"}>남</Radio>
+                                                <Radio value={"2"}>여</Radio>
+                                                <Radio value={"3"}>모름</Radio>
+                                            </Radio.Group>
+                                        </Col>
+                                    </Row>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>주소 :</Col>
+                                        <Col><Input placeholder="주소" onChange={m_addr1_change} value={m_addr1}/></Col>
+                                    </Row>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>부 보호자 :</Col>
+                                        <Col><Input placeholder="부 보호자" onChange={s_name_change} value={s_name}/></Col>
+                                    </Row>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>전화번호 :</Col>
+                                        <Col><Input placeholder="전화번호"  onChange={s_hp_change} value={s_hp_no}/></Col>
+                                    </Row>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>성별 :</Col>
+                                        <Col>
+                                            <Radio.Group onChange={s_gender_change} value={s_gender}>
+                                                <Radio value={"1"}>남</Radio>
+                                                <Radio value={"2"}>여</Radio>
+                                                <Radio value={"3"}>모름</Radio>
+                                            </Radio.Group>
+                                        </Col>
+                                    </Row>
+                                </Col>
+                                <Col span={9}>
+                                    <Table size="small" 
+                                        pagination={false}
+                                        columns={dogInfoColumns}
+                                        dataSource={dogdata}
+                                        scroll={{ y: 150 }}
+                                        style={{cursor : "pointer"}}/>
+                                </Col>
+                            </div>
+                        </Card>
+                    </Col>
+                    <Col span={9} style={{border: "1px solid #f0f0f0"}}>
+                        <CardDiv>강아지 프로필</CardDiv>
+                        <Card size="small" bordered={false}>
+                            <div ref={imgRef} style={{marginBottom : "3px"}}><Button type="primary" onClick={clickUpload}>사진업로드</Button></div>
+                            <input ref={fileRef} type="file" id="image" accept="image/*" onChange={fileOnchange} hidden/>
+                            <div style={{display : "flex", width : "100%"}}>
+                                <Col span={12} >
+                                    <div style={{border : "1px solid #d9d9d9",width : "200px",height : "200px",overflow : "auto"}}>
+                                        {preview}
+                                    </div>
+                                </Col>  
+                                <Col span={12}>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>이름 :</Col>
+                                        <Col><Input placeholder="이름" /></Col>
+                                    </Row>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>종류 :</Col>
+                                        <Col><Input placeholder="종류" /></Col>
+                                    </Row>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>성별 :</Col>
+                                        <Col>
+                                            <Radio.Group >
+                                                <Radio value={"1"}>남</Radio>
+                                                <Radio value={"2"}>여</Radio>
+                                            </Radio.Group>
+                                        </Col>
+                                    </Row>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>나이 :</Col>
+                                        <Col>
+                                            <Input placeholder="나이" />
+                                        </Col>
+                                    </Row>
+                                    <Row style={{marginBottom : "5px"}}>
+                                        <Col span={5}>생일 :</Col>
+                                        <Col><DatePicker locale={locale}/></Col>
+                                    </Row>
+                                </Col>
+                            </div>
+                        </Card>
+                    </Col>
+                    <Col span={5} style={{border: "1px solid #f0f0f0"}}>
+                        <CardDiv>
+                            구매목록
+                            <Button size="small"
+                                    type="primary"
+                                    style={{marginLeft : "5px"}}
+                                    icon={<PlusCircleOutlined/>}
+                                    onClick = {OpenBuyListPopup}/>
+                        </CardDiv>
+                        <Card size="small" bordered={false}>
+                            <Table pagination={false}
+                                size="small"
+                                columns={buyInfoColumns}
+                                dataSource={buydata}
+                                scroll={{ y: 150 }}
+                                style={{cursor : "pointer"}}
+                                onRow={(record, rowIndex) => {
+                                    return {
+                                    onDoubleClick: event => {dbOnclickBuyList(record, rowIndex)}
+                                    };
+                                }}
+                                />
+                        </Card>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={10} style={{border: "1px solid #f0f0f0"}}>
+                        <CardDiv>블랙리스트</CardDiv>
+                        <Card size="small" bordered={false}>
                         <Row style={{marginBottom : "5px", display : "flex", alignItems : "center"}}>
-                            <label>블랙리스트</label>
-                            <Switch size="small"  />
+                            <label style={{marginRight : "5px"}}>블랙리스트</label>
+                            <Checkbox onChange={black_yb_change} value={black_yb} checked={black_yb_chk}/>
                         </Row>
                         <Row style={{display : "flex", alignItems : "center", marginBottom : "5px"}}>
                             <Col span={2}>
                                 <label>노쇼 : </label>
                             </Col>
-                            <InputNumber size="middle" min={0} max={100000} defaultValue={0} />
+                            <InputNumber size="middle" min={0} max={100000} defaultValue={0} onChange={noshow_change} value={noshow}/>
                             <Col span={2}>
                                 <label>회</label>
                             </Col>
@@ -489,45 +594,46 @@ export default function Home(){
                             <Col span={2}>
                                 <label>지각 : </label>
                             </Col>
-                            <InputNumber size="middle" min={0} max={100000} defaultValue={0} />
+                            <InputNumber size="middle" min={0} max={100000} defaultValue={0} onChange={late_change} value={late}/>
                             <Col span={2}>
                                 <label>회</label>
                             </Col>
                         </Row>
-                        <TextArea rows={5}/>
-                    </Card>
-                </Col>
-                <Col span={14} style={{border: "1px solid #f0f0f0"}}>
-                    <CardDiv>
-                        미용 기록
-                        <Button size="small" 
-                                type="primary"
-                                style={{marginLeft : "5px"}}
-                                icon={<PlusCircleOutlined/>}
-                                onClick={OpenCutHistoryPopup}/>
-                    </CardDiv>
-                    <Card size="small" bordered={false}>
-                        <div style={{display : "flex",width : "100%"}}>
-                            <Col span={4}>
-                                <Table
-                                size="small"
-                                pagination={false}
-                                columns={cutInfoColumns}
-                                dataSource = {cutdata}
-                                scroll={{ y: 150 }}
-                                style={{cursor : "pointer"}}
-                                />
-                            </Col>
-                            <Col span={20} style={{textAlign : "center"}}>
-                                <TextArea  rows={7} style={{width : "90%"}}/>
-                            </Col>
-                        </div>
-                    </Card>
-                </Col>
-            </Row>
-            <div style={{textAlign : "center", margin : "5px 0px 10px"}}>
-                <Button style={{marginRight : "5px"}} type="primary" onClick={clickSaveDate}>저장</Button>
-            </div>
+                        <TextArea rows={6} onChange={memo_change} value={memo}/>
+                        </Card>
+                    </Col>
+                    <Col span={14} style={{border: "1px solid #f0f0f0"}}>
+                        <CardDiv>
+                            미용 기록
+                            <Button size="small" 
+                                    type="primary"
+                                    style={{marginLeft : "5px"}}
+                                    icon={<PlusCircleOutlined/>}
+                                    onClick={OpenCutHistoryPopup}/>
+                        </CardDiv>
+                        <Card size="small" bordered={false}>
+                            <div style={{display : "flex",width : "100%"}}>
+                                <Col span={4}>
+                                    <Table
+                                    size="small"
+                                    pagination={false}
+                                    columns={cutInfoColumns}
+                                    dataSource = {cutdata}
+                                    scroll={{ y: 150 }}
+                                    style={{cursor : "pointer"}}
+                                    />
+                                </Col>
+                                <Col span={20} style={{textAlign : "center"}}>
+                                    <TextArea  rows={7} style={{width : "90%"}}/>
+                                </Col>
+                            </div>
+                        </Card>
+                    </Col>
+                </Row>
+                <div style={{textAlign : "center", margin : "5px 0px 10px"}}>
+                    <Button style={{marginRight : "5px"}} type="primary" onClick={clickSaveDate}>저장</Button>
+                </div>
+            </SpinStyle>
         </MainDiv>
         </>
     );
