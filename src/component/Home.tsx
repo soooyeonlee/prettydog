@@ -108,9 +108,7 @@ export default function Home(){
         setLoading(false);
         if(result.status === 200 && result.data){
             if(Object(result.data).data){
-                set_dogdata(
-                    Object(result.data).data
-                );
+                set_dogdata(Object(result.data).data);
                 PetInfo(pet_id);
             }
         }
