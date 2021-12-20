@@ -127,7 +127,10 @@ export default function Home(){
      * 애견테이블 클릭 시 애견정보 세팅
      */
     const petRowClick = (record : Object) => {
-        
+        set_kind_nm(Object(record).kind_nm);
+        set_name(Object(record).name);
+        set_gender_cd(Object(record).gender_cd);
+        //set_birth_day(Object(record).birth_day);
     }
 
     /**
