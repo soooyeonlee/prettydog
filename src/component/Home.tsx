@@ -3,8 +3,9 @@ import imageCompression from 'browser-image-compression';
 import { CardDiv, MainDiv, MainHeader, MenuDiv, SpinStyle } from './StyleComponet';
 import { SearchOutlined ,PlusCircleOutlined,DeleteOutlined} from '@ant-design/icons';
 import locale from 'antd/lib/date-picker/locale/ko_KR';
-import {Menu, Input, Table, Card, Row, Col, Upload,DatePicker , Button,InputNumber,Switch,Radio, RadioChangeEvent } from 'antd';
+import {Menu, Input, Table, Card, Row, Col, DatePicker , Button,InputNumber,Radio, RadioChangeEvent } from 'antd';
 import logo from '../img/testimg.png';
+import { Moment } from 'moment'
 import BuyListPopup from './BuyListPopup';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import OwnerSearchPopup from './OwnerSearchPopup';
@@ -27,7 +28,9 @@ export default function Home(){
     const [showBlackListPopup, setShowBlackListPopup] = useState<boolean>(false);
     const [showCustomerEnrollPopup,setShowCustomerEnrollPopup] = useState<boolean>(false);
     const [showPetEnrollPopup,setShowPetEnrollPopup] = useState<boolean>(false);
-    const [id, setId] = useState<string>('');
+    const [id, setGogekId] = useState<string>('');
+    const [pet_id, setPetId] = useState<string>('');
+    const [dogdata, set_dogdata] = useState<Array<Object>>([]);
 
     const [m_name, set_m_name] = useState<string>('');
     const [m_hp_no, set_m_hp_no] = useState<string>('');
@@ -43,18 +46,29 @@ export default function Home(){
     const [late, set_late] = useState<valueType>('');
     const [memo, set_memo] = useState<string>('');
 
+    const [kind_nm, set_kind_nm] = useState<string>('');
+    const [name, set_name] = useState<string>('');
+    const [gender_cd, set_gender_cd] = useState<string>('');
+    const [birth_day,set_birth_day] = useState<Moment>();
+    const [birth_day_str,set_birth_day_str] = useState<string>('');
+    const [age, set_age] = useState<number>();
+
     const [file, setFile] = useState<File>();
     const [previewURL, setPreviewURL] = useState<any>();
     const [preview,setPreview] = useState<any>();
 
     useEffect(()=>{
-        SetInfo(id);
+        SetGogekInfo(id);
     },[id])
 
+    useEffect(()=>{
+        SetPetInfo(pet_id);
+    },[pet_id]);
+
     /**
-     * 저장 후 값 세팅
+     * 저장 후 고객정보  세팅
      */
-    const SetInfo = async(id : string) => {
+    const SetGogekInfo = async(id : string) => {
         let params:object = {};
         setLoading(true);
         let result:ResponseDatas = await service('/client/' + id,'GET', params);
@@ -83,6 +97,39 @@ export default function Home(){
             }
         }
     }
+
+    /**
+     * 애견 정보 저장 후 값 세팅
+     */
+    const SetPetInfo = async(pet_id : string) => {
+        console.log("dd");
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/client/' + id + '/profile/' + pet_id,'GET', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            console.log(Object(result.data).data);
+            if(Object(result.data).data){
+                set_dogdata([
+                    {
+                        key : pet_id,
+                        kind_nm : Object(result.data).data.kind_nm,
+                        name : Object(result.data).data.name,
+                        gender_cd : Object(result.data).data.gender_cd,
+                        birth_day : Object(result.data).data.birth_day,
+                    }
+                ]);
+            }
+        }
+    }
+
+    /**
+     * 애견테이블 클릭 시 애견정보 세팅
+     */
+    const petRowClick = (record : Object) => {
+        
+    }
+
     /**
      * 보호자,강아지 검색 팝업
      */
@@ -169,7 +216,7 @@ export default function Home(){
     }
 
     /**
-     * 값 가져오기
+     * 값 입력
      */
      const m_name_change = (event : ChangeEvent<HTMLInputElement>) => {
         set_m_name(event.target.value);
@@ -222,6 +269,29 @@ export default function Home(){
 
     const memo_change = (event : ChangeEvent<HTMLTextAreaElement>) => {
         set_memo(event.target.value);
+    }
+
+    const kind_nm_change = (event : ChangeEvent<HTMLInputElement>) => {
+        set_kind_nm(event.target.value);
+    }
+
+    const name_change = (event : ChangeEvent<HTMLInputElement>) => {
+        set_name(event.target.value);
+    }
+
+    const gender_cd_change = (event : RadioChangeEvent) => {
+        set_gender_cd(event.target.value);
+    }
+
+    const birth_day_change = (date : any , dateStirng : string) => {
+        set_birth_day(date);
+        set_birth_day_str(dateStirng);
+
+        // 나이 계산
+        var today = new Date();
+        var birth = new Date(dateStirng);
+        var years = today.getFullYear() - birth.getFullYear();
+        set_age(years);
     }
 
     /**
@@ -295,8 +365,8 @@ export default function Home(){
     const dogInfoColumns = [
         {
             title : "강아지 이름",
-            dataIndex : "pet_nm",
-            key : "pet_nm"
+            dataIndex : "name",
+            key : "name"
         },
         {
             title: '',
@@ -308,27 +378,6 @@ export default function Home(){
             ),
         }
     ]
-
-    const dogdata = [
-        {
-          key: '1',
-          gogek_nm: '디지니',
-          hp_backnum: 1234,
-          pet_nm: '초코',
-        },
-        {
-          key: '2',
-          gogek_nm: '디지니',
-          hp_backnum: 1234,
-          pet_nm: '몽글',
-        },
-        {
-          key: '3',
-          gogek_nm: '디지니',
-          hp_backnum: 1234,
-          pet_nm: '미니',
-        },
-    ];
 
     const buyInfoColumns = [
         {
@@ -418,8 +467,8 @@ export default function Home(){
         <CutHistoryPopup CloseCutHistoryPopup={CloseCutHistoryPopup} showCutHistoryPopup={showCutHistoryPopup}/>
         <BuyDetailPopup CloseBuyDetailPopup={CloseBuyDetailPopup} showBuyDetailPopup={showBuyDetailPopup}/>
         <BlackListPopup CloseBlackListPopup={CloseBlackListPopup} showBlackListPopup={showBlackListPopup}/>
-        <CustomerEnrollPopup CloseCustomerEnroll={CloseCustomerEnroll} showCustomerEnrollPopup={showCustomerEnrollPopup} setId={setId}/>
-        <PetEnrollPopup ClosePetEnroll={ClosePetEnroll}  showPetEnrollPopup={showPetEnrollPopup}/>
+        <CustomerEnrollPopup CloseCustomerEnroll={CloseCustomerEnroll} showCustomerEnrollPopup={showCustomerEnrollPopup} setGogekId={setGogekId}/>
+        <PetEnrollPopup ClosePetEnroll={ClosePetEnroll}  showPetEnrollPopup={showPetEnrollPopup} id={id} setPetId={setPetId}/>
         <MainDiv>
             <SpinStyle spinning={loading}>
                 <MainHeader>
@@ -442,14 +491,14 @@ export default function Home(){
                     </div>
                     <div>
                         <Button style={{marginRight : "5px"}} type="primary" onClick={OpenCustomerEnroll}>고객등록</Button>
-                        <Button style={{marginRight : "5px"}} type="primary" onClick={OpenPetEnroll}>애견등록</Button>
+                        <Button style={{marginRight : "5px"}} type="primary" onClick={OpenPetEnroll} disabled = {id ? false : true}>애견등록</Button>
                         <Button style={{marginRight : "5px"}} type="primary" onClick={OpenBlackListPopup}>블랙리스트 명단</Button>
                     </div>
                 </div>
                 <Row>
                     <Col span={10} style={{border: "1px solid #f0f0f0"}}>
                         <CardDiv>보호자 프로필
-                            <Button icon={<DeleteOutlined />} type='primary' danger/>
+                            <Button icon={<DeleteOutlined />} type='primary' danger disabled = {id ? false : true}/>
                         </CardDiv>
                         <Card size="small" bordered={false}>
                             <div style={{display : "flex", width : "100%"}}>
@@ -501,7 +550,12 @@ export default function Home(){
                                         columns={dogInfoColumns}
                                         dataSource={dogdata}
                                         scroll={{ y: 150 }}
-                                        style={{cursor : "pointer"}}/>
+                                        style={{cursor : "pointer"}}
+                                        onRow={(record,rowIndex)=>{
+                                            return{
+                                                onClick : event => {petRowClick(record)}
+                                            }
+                                        }}/>
                                 </Col>
                             </div>
                         </Card>
@@ -520,30 +574,31 @@ export default function Home(){
                                 <Col span={12}>
                                     <Row style={{marginBottom : "5px"}}>
                                         <Col span={5}>이름 :</Col>
-                                        <Col><Input placeholder="이름" /></Col>
+                                        <Col><Input placeholder="이름" onChange={name_change} value={name}/></Col>
                                     </Row>
                                     <Row style={{marginBottom : "5px"}}>
                                         <Col span={5}>종류 :</Col>
-                                        <Col><Input placeholder="종류" /></Col>
+                                        <Col><Input placeholder="종류" onChange={kind_nm_change} value={kind_nm}/></Col>
                                     </Row>
                                     <Row style={{marginBottom : "5px"}}>
                                         <Col span={5}>성별 :</Col>
                                         <Col>
-                                            <Radio.Group >
+                                            <Radio.Group onChange={gender_cd_change} value={gender_cd}>
                                                 <Radio value={"1"}>남</Radio>
                                                 <Radio value={"2"}>여</Radio>
+                                                <Radio value={"3"}>모름</Radio>
                                             </Radio.Group>
                                         </Col>
                                     </Row>
                                     <Row style={{marginBottom : "5px"}}>
-                                        <Col span={5}>나이 :</Col>
-                                        <Col>
-                                            <Input placeholder="나이" />
-                                        </Col>
+                                        <Col span={5}>생일 :</Col>
+                                        <Col><DatePicker locale={locale} onChange={birth_day_change} value={birth_day}/></Col>
                                     </Row>
                                     <Row style={{marginBottom : "5px"}}>
-                                        <Col span={5}>생일 :</Col>
-                                        <Col><DatePicker locale={locale}/></Col>
+                                        <Col span={5}>나이 :</Col>
+                                        <Col>
+                                            <Input placeholder="나이" readOnly value={age}/>
+                                        </Col>
                                     </Row>
                                 </Col>
                             </div>

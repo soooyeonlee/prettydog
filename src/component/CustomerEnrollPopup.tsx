@@ -8,7 +8,7 @@ import { valueType } from "antd/lib/statistic/utils";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 const { TextArea } = Input;
-export default function CustomerEnrollPopup(props : {CloseCustomerEnroll : () => void, showCustomerEnrollPopup : boolean, setId : any}) {
+export default function CustomerEnrollPopup(props : {CloseCustomerEnroll : () => void, showCustomerEnrollPopup : boolean, setGogekId : any}) {
     const [loading, setLoading] = useState<boolean>(false);
     const [m_name, set_m_name] = useState<string>('');
     const [m_hp_no, set_m_hp_no] = useState<string>('');
@@ -150,7 +150,7 @@ export default function CustomerEnrollPopup(props : {CloseCustomerEnroll : () =>
                 alert('정상적으로 저장 완료 ID='+ Object(result.data).data.id);
                 console.log('정상적으로 저장 완료');
                 ClosePopup();
-                props.setId(Object(result.data).data.id);
+                props.setGogekId(Object(result.data).data.id);
             }
         }
     }

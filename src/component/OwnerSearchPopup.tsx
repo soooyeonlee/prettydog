@@ -1,6 +1,6 @@
 import { Button, Input, Table } from "antd";
 import { useState } from "react";
-import { SearchOutlined ,PlusCircleOutlined} from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
 import { ButtonDiv, CardPopupDiv, OwnerSearchModalDiv, OwnerSearchModalInnerDiv, SpinStyle } from "./StyleComponet";
 const {Search} = Input;
 export default function OwnerSearchPopup(props : {CloseOwnerSearchPopup : () => void, showOwnerSearchPopup : boolean}){
