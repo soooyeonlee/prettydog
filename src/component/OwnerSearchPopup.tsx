@@ -109,6 +109,7 @@ export default function OwnerSearchPopup(props : {CloseOwnerSearchPopup : () => 
                            pagination={false}
                            columns = {OwnerColumns}
                            dataSource={OwnerData}
+                           rowKey={'p_id'}
                            scroll={{ y: 250 }}/>
                 </SpinStyle>
             </OwnerSearchModalInnerDiv>

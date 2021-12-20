@@ -58,11 +58,16 @@ export default function Home(){
     const [preview,setPreview] = useState<any>();
 
     useEffect(()=>{
-        SetGogekInfo(id);
+        if(id){
+            SetGogekInfo(id);
+        }
+        
     },[id])
 
     useEffect(()=>{
-        SetPetInfo(pet_id);
+        if(pet_id){
+            SetPetInfo(pet_id);
+        }
     },[pet_id]);
 
     /**
@@ -379,8 +384,8 @@ export default function Home(){
         },
         {
             title: '',
-            dataIndex: 'key',
-            key: 'key',
+            dataIndex: 'id',
+            key: 'id',
             align: 'center' as 'center',
             render: (text : String, record : Object) => (
                 <Button type="primary" size='small' danger icon={<DeleteOutlined/>}/>
@@ -407,17 +412,7 @@ export default function Home(){
             key: '1',
             buy_date : '2021-11-13',
             buy_nm : '강아지를 위한 개껌'
-        },
-        {
-            key: '2',
-            buy_date : '2021-11-13',
-            buy_nm : '강아지를 위한 개껌'
-        },
-        {
-            key: '3',
-            buy_date : '2021-11-13',
-            buy_nm : '강아지를 위한 개껌'
-        },
+        }
     ];
 
     const cutInfoColumns = [
@@ -431,40 +426,6 @@ export default function Home(){
     const cutdata = [
         {
             key: '1',
-            cut_date : '2021-09-13'
-        },
-        {
-            key: '2',
-            cut_date : '2021-10-13'
-        },
-        {
-            key: '3',
-            cut_date : '2021-11-13'
-        },
-        {
-            key: '4',
-            cut_date : '2021-09-13'
-        },
-        {
-            key: '5',
-            cut_date : '2021-10-13'
-        },
-        {
-            key: '6',
-            cut_date : '2021-11-13'
-        },{
-            key: '7',
-            cut_date : '2021-09-13'
-        },
-        {
-            key: '8',
-            cut_date : '2021-10-13'
-        },
-        {
-            key: '9',
-            cut_date : '2021-11-13'
-        },{
-            key: '10',
             cut_date : '2021-09-13'
         }
     ]
@@ -560,6 +521,7 @@ export default function Home(){
                                         dataSource={dogdata}
                                         scroll={{ y: 150 }}
                                         style={{cursor : "pointer"}}
+                                        rowKey={'id'}
                                         onRow={(record,rowIndex)=>{
                                             return{
                                                 onClick : event => {petRowClick(record)}

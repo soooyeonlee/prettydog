@@ -53,26 +53,7 @@ export default function BuyListPopup(props : {CloseBuyListPopup : () => void, sh
             buy_date : "2021-09-27",
             buy_nm : "개껌1",
             buy_amount : "1",
-        },
-        {
-            key : "1",
-            buy_date : "2021-09-27",
-            buy_nm : "개껌1",
-            buy_amount : "1",
-        },
-        {
-            key : "2",
-            buy_date : "2021-09-27",
-            buy_nm : "개껌1",
-            buy_amount : "1",
-        },
-        {
-            key : "3",
-            buy_date : "2021-09-27",
-            buy_nm : "개껌1",
-            buy_amount : "1",
-        },
-        
+        }        
     ]
     const [loading, setLoading] = useState<boolean>(false);
     const selectSearchFilterOption = (input : any, option : any) =>{
