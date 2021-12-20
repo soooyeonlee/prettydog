@@ -76,7 +76,7 @@ export default function BuyListPopup(props : {CloseBuyListPopup : () => void, sh
     ]
     const [loading, setLoading] = useState<boolean>(false);
     const selectSearchFilterOption = (input : any, option : any) =>{
-        console.log(input, option);
+        
         return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     }
     return(

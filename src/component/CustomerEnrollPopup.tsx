@@ -1,12 +1,10 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { ButtonDiv, CardDiv, CardPopupDiv, CustomerInnerDiv, CustomerModalDiv, SpinStyle } from "./StyleComponet";
-import { SearchOutlined ,CloseSquareTwoTone} from '@ant-design/icons';
-import { Button, Row, Col, Card, Radio, Input, Switch, InputNumber, Modal, RadioChangeEvent, Checkbox } from "antd";
+import { ButtonDiv,CardPopupDiv, CustomerInnerDiv, CustomerModalDiv, SpinStyle } from "./StyleComponet";
+import { CloseSquareTwoTone} from '@ant-design/icons';
+import { Button, Row, Col, Card, Radio, Input, InputNumber, Modal, RadioChangeEvent, Checkbox } from "antd";
 import service, { ResponseDatas } from "../helper/service";
-import { SwitchChangeEventHandler, SwitchClickEventHandler } from "antd/lib/switch";
 import { valueType } from "antd/lib/statistic/utils";
-import { CheckboxValueType } from "antd/lib/checkbox/Group";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
+
 const { TextArea } = Input;
 export default function CustomerEnrollPopup(props : {CloseCustomerEnroll : () => void, showCustomerEnrollPopup : boolean, setGogekId : any}) {
     const [loading, setLoading] = useState<boolean>(false);
@@ -145,10 +143,10 @@ export default function CustomerEnrollPopup(props : {CloseCustomerEnroll : () =>
         let result:ResponseDatas = await service('/client','POST', params);
         setLoading(false);
         if(result.status === 200 && result.data){
-            console.log(result.data);
+            
             if(Object(result.data).data.id){
                 alert('정상적으로 저장 완료 ID='+ Object(result.data).data.id);
-                console.log('정상적으로 저장 완료');
+               
                 ClosePopup();
                 props.setGogekId(Object(result.data).data.id);
             }

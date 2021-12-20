@@ -102,23 +102,16 @@ export default function Home(){
      * 애견 정보 저장 후 값 세팅
      */
     const SetPetInfo = async(pet_id : string) => {
-        console.log("dd");
         let params:object = {};
         setLoading(true);
-        let result:ResponseDatas = await service('/client/' + id + '/profile/' + pet_id,'GET', params);
+        let result:ResponseDatas = await service('/client/' + id + '/profile','GET', params);
         setLoading(false);
         if(result.status === 200 && result.data){
-            console.log(Object(result.data).data);
             if(Object(result.data).data){
-                set_dogdata([
-                    {
-                        key : pet_id,
-                        kind_nm : Object(result.data).data.kind_nm,
-                        name : Object(result.data).data.name,
-                        gender_cd : Object(result.data).data.gender_cd,
-                        birth_day : Object(result.data).data.birth_day,
-                    }
-                ]);
+                set_dogdata(
+                    Object(result.data).data
+                );
+                PetInfo(pet_id);
             }
         }
     }
@@ -126,11 +119,26 @@ export default function Home(){
     /**
      * 애견테이블 클릭 시 애견정보 세팅
      */
-    const petRowClick = (record : Object) => {
-        set_kind_nm(Object(record).kind_nm);
-        set_name(Object(record).name);
-        set_gender_cd(Object(record).gender_cd);
-        //set_birth_day(Object(record).birth_day);
+     const petRowClick = (record : Object) => {
+        PetInfo(Object(record).id);
+    }
+
+    /**
+     * 애견정보 세팅 (서버호출)
+     */
+    const PetInfo = async(pet_id : string) => {
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/client/' + id + '/profile/' + pet_id,'GET', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            if(Object(result.data).data){
+                set_kind_nm(Object(result.data).data.kind_nm);
+                set_name(Object(result.data).data.name);
+                set_gender_cd(Object(result.data).data.gender_cd);
+            }
+        }
+
     }
 
     /**
@@ -305,7 +313,7 @@ export default function Home(){
 
     useEffect(() => {
         if(file) //처음 파일 등록하지 않았을 때를 방지
-        setPreview(<img className='img_preview' src={previewURL}></img>);
+        setPreview(<img className='img_preview' src={previewURL} alt='url'></img>);
         return () => {
 
         }
@@ -465,7 +473,7 @@ export default function Home(){
 
     return(
         <>
-        <OwnerSearchPopup CloseOwnerSearchPopup={CloseOwnerSearchPopup} showOwnerSearchPopup={showOwnerSearchPopup}/>
+        <OwnerSearchPopup CloseOwnerSearchPopup={CloseOwnerSearchPopup} showOwnerSearchPopup={showOwnerSearchPopup}setGogekId={setGogekId} setPetId={setPetId}/>
         <BuyListPopup CloseBuyListPopup={CloseBuyListPopup} showBuyListPopup={showBuyListPopup}/>
         <CutHistoryPopup CloseCutHistoryPopup={CloseCutHistoryPopup} showCutHistoryPopup={showCutHistoryPopup}/>
         <BuyDetailPopup CloseBuyDetailPopup={CloseBuyDetailPopup} showBuyDetailPopup={showBuyDetailPopup}/>
@@ -476,7 +484,7 @@ export default function Home(){
             <SpinStyle spinning={loading}>
                 <MainHeader>
                     이뻐진개
-                    <img style={{maxHeight : "100%", maxWidth : "100%"}}  src={logo}></img>
+                    <img style={{maxHeight : "100%", maxWidth : "100%"}} alt="로고" src={logo}></img>
                 </MainHeader>
                 <MenuDiv>
                     <Menu mode="horizontal" style={{width :"100%"}}>

@@ -182,7 +182,6 @@ export default function PetEnrollPopup(props : {ClosePetEnroll : () => void, sho
         let result:ResponseDatas = await service('/client/'+props.id+'/profile','POST', params);
         setLoading(false);
         if(result.status === 200 && result.data){
-            console.log(result.data);
             if(Object(result.data).data.id){
                 alert('정상적으로 저장 완료 ID='+ Object(result.data).data.id);
                 ClosePopup();

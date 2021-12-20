@@ -61,7 +61,7 @@ export const OwnerSearchModalDiv = styled.div`
 
 export const OwnerSearchModalInnerDiv = styled.div`
     width: 50%;
-    height: 450px;
+    height: 350px;
     border-radius: 10px;
     background: #fff;
     position: absolute;
