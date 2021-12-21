@@ -50,6 +50,7 @@ export default function Home(){
     const [name, set_name] = useState<string>('');
     const [gender_cd, set_gender_cd] = useState<string>('');
     const [birth_day,set_birth_day] = useState<Moment>();
+    const [pic_url,set_pic_url] = useState<string>('');
     const [birth_day_str,set_birth_day_str] = useState<string>('');
     const [age, set_age] = useState<number>();
 
@@ -177,6 +178,8 @@ export default function Home(){
                 set_kind_nm(Object(result.data).data.kind_nm);
                 set_name(Object(result.data).data.name);
                 set_gender_cd(Object(result.data).data.gender_cd);
+                setPreview(<img className='img_preview' src={'http://prettydog.test'+Object(result.data).data.pic_upload} alt='url'></img>);
+                //setPreviewURL('http://prettydog.test'+Object(result.data).data.pic_upload);
                 if(Object(result.data).data.birth_day){
                     set_birth_day(moment(Object(result.data).data.birth_day));
                 }
