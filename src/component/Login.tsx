@@ -12,7 +12,7 @@ export default function Login(){
         let result:ResponseDatas = await service('/login/token','POST', {'email':'test1@test.com', 'password':'test1234'});
         if(result.status === 200 && result.data){
             sessionStorage.setItem('token', Object(result.data).data.token);
-            document.location.href = "/";
+            document.location.href = "/home";
         }
     }
     

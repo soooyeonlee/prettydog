@@ -44,48 +44,7 @@ export default function BlackListPopup(props : {CloseBlackListPopup : () => void
             pet_nm : "초코",
             hp_no : "010-1234-5655",
             contents : "사소한 일로 컴플레인이 매우 반복적임. 환불요구도..",
-        },
-        {
-            key : "2",
-            owner_nm : "김김김",
-            side_owner_nm : "김김김",
-            pet_nm : "초코",
-            hp_no : "010-1234-5655",
-            contents : "사소한 일로 컴플레인이 매우 반복적임. 환불요구도..",
-        },
-        {
-            key : "3",
-            owner_nm : "김김김",
-            side_owner_nm : "김김김",
-            pet_nm : "초코",
-            hp_no : "010-1234-5655",
-            contents : "사소한 일로 컴플레인이 매우 반복적임. 환불요구도..",
-        },
-        {
-            key : "4",
-            owner_nm : "김김김",
-            side_owner_nm : "김김김",
-            pet_nm : "초코",
-            hp_no : "010-1234-5655",
-            contents : "사소한 일로 컴플레인이 매우 반복적임. 환불요구도..",
-        },
-        {
-            key : "5",
-            owner_nm : "김김김",
-            side_owner_nm : "김김김",
-            pet_nm : "초코",
-            hp_no : "010-1234-5655",
-            contents : "사소한 일로 컴플레인이 매우 반복적임. 환불요구도..",
-        },
-        {
-            key : "6",
-            owner_nm : "김김김",
-            side_owner_nm : "김김김",
-            pet_nm : "초코",
-            hp_no : "010-1234-5655",
-            contents : "사소한 일로 컴플레인이 매우 반복적임. 환불요구도..",
-        },
-        
+        }
     ]
     return(
         <>

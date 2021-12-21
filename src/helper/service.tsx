@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig, AxiosRequestHeaders, Method } from "axios";
 
 
-const BASE_URL:string = "http://146.56.148.229/api/";
-//const BASE_URL:string = "http://prettydog.test/api/";
+//const BASE_URL:string = "http://146.56.148.229/api/";
+const BASE_URL:string = "http://prettydog.test/api/";
 
 export interface ResponseDatas {
     status? : number,
@@ -20,7 +20,6 @@ export default async function service(url:string, method:Method, requestData:any
     if(sessionStorage.getItem('token')){
         token = sessionStorage.getItem('token');
     }
-
     const params = new FormData();
     for(let key in requestData){
         if(!requestData[key]){
