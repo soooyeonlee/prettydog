@@ -80,7 +80,7 @@ export default function PetEnrollPopup(props : {ClosePetEnroll : () => void, sho
  
     const fileOnchange = async(event : ChangeEvent<HTMLInputElement>) => {
         let file : File = (event.target.files as FileList)[0];
- 
+
         const options = {
              maxSizeMB: 2, 
              maxWidthOrHeight: 198
@@ -175,7 +175,8 @@ export default function PetEnrollPopup(props : {ClosePetEnroll : () => void, sho
             kind_nm : kind_nm,
             name : name,
             birth_day : birth_day_str,
-            gender_cd : gender_cd
+            gender_cd : gender_cd,
+            file : file
         };
 
         setLoading(true);
