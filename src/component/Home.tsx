@@ -5,7 +5,7 @@ import { SearchOutlined ,PlusCircleOutlined,DeleteOutlined} from '@ant-design/ic
 import locale from 'antd/lib/date-picker/locale/ko_KR';
 import {Menu, Input, Table, Card, Row, Col, DatePicker , Button,InputNumber,Radio, RadioChangeEvent } from 'antd';
 import logo from '../img/testimg.png';
-import { Moment } from 'moment'
+import moment, { Moment } from 'moment'
 import BuyListPopup from './BuyListPopup';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import OwnerSearchPopup from './OwnerSearchPopup';
@@ -57,7 +57,23 @@ export default function Home(){
     const [previewURL, setPreviewURL] = useState<any>();
     const [preview,setPreview] = useState<any>();
 
+    useEffect(() => {
+        if(!sessionStorage.getItem('token')){
+            document.location.href = "/login";
+        }
+    },[]);
+
     useEffect(()=>{
+        if(birth_day){  
+            let today = new Date();
+            let birth = new Date(birth_day.format('YYYY-MM-DD'));
+            let years = today.getFullYear() - birth.getFullYear();
+            set_age(years);
+        }
+    },[birth_day]);
+
+    useEffect(()=>{
+        //setClearClient();
         if(id){
             SetGogekInfo(id);
         }
@@ -65,10 +81,35 @@ export default function Home(){
     },[id])
 
     useEffect(()=>{
+        //seProfileClear();
         if(pet_id){
             SetPetInfo(pet_id);
         }
     },[pet_id]);
+
+    const setClearClient = () =>{
+        set_dogdata([]);
+        set_m_name('');
+        set_m_hp_no('');
+        set_m_gender('');
+        set_m_addr1('');
+        set_s_name('');
+        set_s_hp_no('');
+        set_s_gender('');
+        set_black_yb_chk(false);
+        set_black_yb('');
+        set_noshow('');
+        set_late('');
+        set_memo('');
+    }
+    const seProfileClear = () =>{
+        set_kind_nm('');
+        set_name('');
+        set_gender_cd('');
+        set_birth_day(undefined);
+        set_birth_day_str('');
+        set_age(undefined);
+    };
 
     /**
      * 저장 후 고객정보  세팅
@@ -139,6 +180,9 @@ export default function Home(){
                 set_kind_nm(Object(result.data).data.kind_nm);
                 set_name(Object(result.data).data.name);
                 set_gender_cd(Object(result.data).data.gender_cd);
+                if(Object(result.data).data.birth_day){
+                    set_birth_day(moment(Object(result.data).data.birth_day));
+                }
             }
         }
 
@@ -299,13 +343,6 @@ export default function Home(){
 
     const birth_day_change = (date : any , dateStirng : string) => {
         set_birth_day(date);
-        set_birth_day_str(dateStirng);
-
-        // 나이 계산
-        var today = new Date();
-        var birth = new Date(dateStirng);
-        var years = today.getFullYear() - birth.getFullYear();
-        set_age(years);
     }
 
     /**
@@ -432,7 +469,7 @@ export default function Home(){
 
     return(
         <>
-        <OwnerSearchPopup CloseOwnerSearchPopup={CloseOwnerSearchPopup} showOwnerSearchPopup={showOwnerSearchPopup}setGogekId={setGogekId} setPetId={setPetId}/>
+        <OwnerSearchPopup CloseOwnerSearchPopup={CloseOwnerSearchPopup} showOwnerSearchPopup={showOwnerSearchPopup} setGogekId={setGogekId} setPetId={setPetId}/>
         <BuyListPopup CloseBuyListPopup={CloseBuyListPopup} showBuyListPopup={showBuyListPopup}/>
         <CutHistoryPopup CloseCutHistoryPopup={CloseCutHistoryPopup} showCutHistoryPopup={showCutHistoryPopup}/>
         <BuyDetailPopup CloseBuyDetailPopup={CloseBuyDetailPopup} showBuyDetailPopup={showBuyDetailPopup}/>
@@ -493,7 +530,7 @@ export default function Home(){
                                     </Row>
                                     <Row style={{marginBottom : "5px"}}>
                                         <Col span={5}>주소 :</Col>
-                                        <Col><Input placeholder="주소" onChange={m_addr1_change} value={m_addr1}/></Col>
+                                        <Col span={18}><Input placeholder="주소" onChange={m_addr1_change} value={m_addr1}/></Col>
                                     </Row>
                                     <Row style={{marginBottom : "5px"}}>
                                         <Col span={5}>부 보호자 :</Col>
