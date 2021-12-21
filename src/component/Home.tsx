@@ -3,7 +3,7 @@ import imageCompression from 'browser-image-compression';
 import { CardDiv, MainDiv, MainHeader, MenuDiv, SpinStyle } from './StyleComponet';
 import { SearchOutlined ,PlusCircleOutlined,DeleteOutlined} from '@ant-design/icons';
 import locale from 'antd/lib/date-picker/locale/ko_KR';
-import {Menu, Input, Table, Card, Row, Col, DatePicker , Button,InputNumber,Radio, RadioChangeEvent } from 'antd';
+import {Menu, Input, Table, Card, Row, Col, DatePicker , Button,InputNumber,Radio, RadioChangeEvent, List, Avatar } from 'antd';
 import logo from '../img/testimg.png';
 import moment, { Moment } from 'moment'
 import BuyListPopup from './BuyListPopup';
@@ -57,11 +57,7 @@ export default function Home(){
     const [previewURL, setPreviewURL] = useState<any>();
     const [preview,setPreview] = useState<any>();
 
-    useEffect(() => {
-        if(!sessionStorage.getItem('token')){
-            document.location.href = "/login";
-        }
-    },[]);
+    
 
     useEffect(()=>{
         if(birth_day){  
@@ -73,7 +69,8 @@ export default function Home(){
     },[birth_day]);
 
     useEffect(()=>{
-        //setClearClient();
+        setClearClient();
+        seProfileClear();
         if(id){
             SetGogekInfo(id);
         }
@@ -81,7 +78,7 @@ export default function Home(){
     },[id])
 
     useEffect(()=>{
-        //seProfileClear();
+        seProfileClear();
         if(pet_id){
             SetPetInfo(pet_id);
         }
@@ -418,15 +415,6 @@ export default function Home(){
             title : "강아지 이름",
             dataIndex : "name",
             key : "name"
-        },
-        {
-            title: '',
-            dataIndex: 'id',
-            key: 'id',
-            align: 'center' as 'center',
-            render: (text : String, record : Object) => (
-                <Button type="primary" size='small' danger icon={<DeleteOutlined/>}/>
-            ),
         }
     ]
 
@@ -551,12 +539,12 @@ export default function Home(){
                                         </Col>
                                     </Row>
                                 </Col>
-                                <Col span={9}>
+                                <Col span={9}>                                    
                                     <Table size="small" 
                                         pagination={false}
                                         columns={dogInfoColumns}
                                         dataSource={dogdata}
-                                        scroll={{ y: 150 }}
+                                        scroll={{ y: 200 }}
                                         style={{cursor : "pointer"}}
                                         rowKey={'id'}
                                         onRow={(record,rowIndex)=>{
@@ -569,7 +557,9 @@ export default function Home(){
                         </Card>
                     </Col>
                     <Col span={9} style={{border: "1px solid #f0f0f0"}}>
-                        <CardDiv>강아지 프로필</CardDiv>
+                        <CardDiv>강아지 프로필
+                            <Button icon={<DeleteOutlined />} type='primary' danger disabled = {pet_id ? false : true}/>
+                        </CardDiv>
                         <Card size="small" bordered={false}>
                             <div ref={imgRef} style={{marginBottom : "3px"}}><Button type="primary" onClick={clickUpload}>사진업로드</Button></div>
                             <input ref={fileRef} type="file" id="image" accept="image/*" onChange={fileOnchange} hidden/>
