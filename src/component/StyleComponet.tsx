@@ -30,6 +30,11 @@ export const CardDiv = styled.div`
    margin-right : 5px;
 `;
 
+export const ButtonCenter = styled.div`
+   text-align : center;
+   margin : 5px 0px 10px;
+`;
+
 export const CardPopupDiv = styled.div`
    background : rgb(227 240 254 / 95%);
    border : 1px solid #f0f0f0;

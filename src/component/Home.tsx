@@ -1,9 +1,9 @@
 import 'antd/dist/antd.css';
 import imageCompression from 'browser-image-compression'; 
-import { CardDiv, MainDiv, MainHeader, MenuDiv, SpinStyle } from './StyleComponet';
+import { ButtonCenter, CardDiv, MainDiv, MainHeader, MenuDiv, SpinStyle } from './StyleComponet';
 import { SearchOutlined ,PlusCircleOutlined,DeleteOutlined} from '@ant-design/icons';
 import locale from 'antd/lib/date-picker/locale/ko_KR';
-import {Menu, Input, Table, Card, Row, Col, DatePicker , Button,InputNumber,Radio, RadioChangeEvent, List, Avatar } from 'antd';
+import {Menu, Input, Table, Card, Row, Col, DatePicker , Button,InputNumber,Radio, RadioChangeEvent, List, Avatar, Modal } from 'antd';
 import logo from '../img/testimg.png';
 import moment, { Moment } from 'moment'
 import BuyListPopup from './BuyListPopup';
@@ -110,6 +110,7 @@ export default function Home(){
         set_birth_day(undefined);
         set_birth_day_str('');
         set_age(undefined);
+        setPreview(<div></div>);
     };
 
     /**
@@ -165,6 +166,7 @@ export default function Home(){
      * 애견테이블 클릭 시 애견정보 세팅
      */
      const petRowClick = (record : Object) => {
+        setPetId(String(Object(record).id));
         PetInfo(Object(record).id);
     }
 
@@ -181,7 +183,12 @@ export default function Home(){
                 set_kind_nm(Object(result.data).data.kind_nm);
                 set_name(Object(result.data).data.name);
                 set_gender_cd(Object(result.data).data.gender_cd);
-                setPreview(<img className='img_preview' src={'http://prettydog.test'+Object(result.data).data.pic_upload} alt='url'></img>);
+                if(Object(result.data).data.pic_upload){
+                    setPreview(<img className='img_preview' src={'http://prettydog.test'+Object(result.data).data.pic_upload} alt='url'></img>);
+                }else{
+                    setPreview(<div></div>);
+                }
+                
                 //setPreviewURL('http://prettydog.test'+Object(result.data).data.pic_upload);
                 if(Object(result.data).data.birth_day){
                     set_birth_day(moment(Object(result.data).data.birth_day));
@@ -396,6 +403,85 @@ export default function Home(){
         set_birth_day(date);
     }
 
+    const onClickCustomerSave = () => {
+        Modal.confirm({
+            title: '저장',
+            content: '저장하시겠습니까?',
+            okText: '확인',
+            cancelText: '취소',
+            onOk() {
+                sendCustomerUpdate(id);
+            }
+        });
+    }
+
+    /**
+     * 고객정보 수정
+     */
+     const sendCustomerUpdate = async(_id : string) => {
+        let params:object = {
+            m_name : m_name,
+            m_hp_no : m_hp_no,
+            m_gender : m_gender,
+            m_addr1 : m_addr1,
+            //m_addr2 : '체육관로 ',
+            s_name  : s_name,
+            s_hp_no : s_hp_no,
+            s_gender : s_gender,
+            black_yb : black_yb,
+            noshow : noshow,
+            late : late,
+            memo : memo,
+        };
+
+        setLoading(true);
+        let result:ResponseDatas = await service('/client/' + _id, 'PUT', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            
+            if(Object(result.data).data.id){
+                alert('정상적으로 저장 완료 ID='+ Object(result.data).data.id);
+            }
+        }
+    }
+
+
+    const onClickPetSave = () => {
+        Modal.confirm({
+            title: '저장',
+            content: '저장하시겠습니까?',
+            okText: '확인',
+            cancelText: '취소',
+            onOk() {
+                sendPetUpdate(id, pet_id);
+            }
+        });
+    }
+
+    /**
+     * 애견정보 수정
+     */
+     const sendPetUpdate = async(_id : string, _petId : string) => {
+        let params:object = {
+            kind_nm : kind_nm,
+            name : name,
+            birth_day : birth_day?.format('YYYYMMDD'),
+            gender_cd : gender_cd,
+            file : file
+        };
+
+        setLoading(true);
+        let result:ResponseDatas = await service('/client/' + _id + '/profile/' + _petId, 'PUT', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            
+            if(Object(result.data).data.id){
+                alert('정상적으로 저장 완료 ID='+ Object(result.data).data.id);
+            }
+        }
+    }
+
+
     /**
      * 이미지 업로드
      */
@@ -517,7 +603,7 @@ export default function Home(){
                     이뻐진개
                     <img style={{maxHeight : "100%", maxWidth : "100%"}} alt="로고" src={logo}></img>
                 </MainHeader>
-                <MenuDiv>
+                <MenuDiv style={{display : 'none'}}>
                     <Menu mode="horizontal" style={{width :"100%"}}>
                         <Menu.Item key={1}>메인</Menu.Item>
                         <Menu.Item key={2}>회원관리</Menu.Item>
@@ -528,7 +614,7 @@ export default function Home(){
                 </MenuDiv>
                 <div style={{display : "flex", justifyContent : "space-between"}}>
                     <div>
-                        <Input placeholder="보호자/강아지 이름검색" style={{width : "300px"}}/>
+                        <Input readOnly={true} placeholder="보호자/강아지 이름검색" style={{width : "300px"}} onClick={OpenOwnerSearchPopup}/>
                         <Button type="primary" onClick={OpenOwnerSearchPopup}><SearchOutlined/></Button>
                     </div>
                     <div>
@@ -605,7 +691,7 @@ export default function Home(){
                     </Col>
                     <Col span={9} style={{border: "1px solid #f0f0f0"}}>
                         <CardDiv>강아지 프로필
-                            <Button icon={<DeleteOutlined />} type='primary' danger disabled = {pet_id ? false : true}/>
+                            <Button icon={<DeleteOutlined />} type='primary' danger disabled={pet_id ? false : true}/>
                         </CardDiv>
                         <Card size="small" bordered={false}>
                             <div ref={imgRef} style={{marginBottom : "3px"}}><Button type="primary" onClick={clickUpload}>사진업로드</Button></div>
@@ -648,6 +734,10 @@ export default function Home(){
                                 </Col>
                             </div>
                         </Card>
+                        <ButtonCenter>
+                            <Button style={{marginRight : "5px"}} type="primary" disabled={pet_id ? false : true}
+                             onClick={onClickPetSave}>애견 프로필 수정</Button>
+                        </ButtonCenter>
                     </Col>
                     <Col span={5} style={{border: "1px solid #f0f0f0"}}>
                         <CardDiv>
@@ -678,29 +768,34 @@ export default function Home(){
                     <Col span={10} style={{border: "1px solid #f0f0f0"}}>
                         <CardDiv>블랙리스트</CardDiv>
                         <Card size="small" bordered={false}>
-                        <Row style={{marginBottom : "5px", display : "flex", alignItems : "center"}}>
-                            <label style={{marginRight : "5px"}}>블랙리스트</label>
-                            <Checkbox onChange={black_yb_change} value={black_yb} checked={black_yb_chk}/>
-                        </Row>
-                        <Row style={{display : "flex", alignItems : "center", marginBottom : "5px"}}>
-                            <Col span={2}>
-                                <label>노쇼 : </label>
-                            </Col>
-                            <InputNumber size="middle" min={0} max={100000} defaultValue={0} onChange={noshow_change} value={noshow}/>
-                            <Col span={2}>
-                                <label>회</label>
-                            </Col>
+                            <Row style={{marginBottom : "5px", display : "flex", alignItems : "center"}}>
+                                <label style={{marginRight : "5px"}}>블랙리스트</label>
+                                <Checkbox onChange={black_yb_change} value={black_yb} checked={black_yb_chk}/>
+                            </Row>
+                            <Row style={{display : "flex", alignItems : "center", marginBottom : "5px"}}>
+                                <Col span={2}>
+                                    <label>노쇼 : </label>
+                                </Col>
+                                <InputNumber size="middle" min={0} max={100000} defaultValue={0} onChange={noshow_change} value={noshow}/>
+                                <Col span={2}>
+                                    <label>회</label>
+                                </Col>
 
-                            <Col span={2}>
-                                <label>지각 : </label>
-                            </Col>
-                            <InputNumber size="middle" min={0} max={100000} defaultValue={0} onChange={late_change} value={late}/>
-                            <Col span={2}>
-                                <label>회</label>
-                            </Col>
-                        </Row>
-                        <TextArea rows={6} onChange={memo_change} value={memo}/>
+                                <Col span={2}>
+                                    <label>지각 : </label>
+                                </Col>
+                                <InputNumber size="middle" min={0} max={100000} defaultValue={0} onChange={late_change} value={late}/>
+                                <Col span={2}>
+                                    <label>회</label>
+                                </Col>
+                            </Row>
+                            <TextArea rows={6} onChange={memo_change} value={memo}/>
                         </Card>
+                        <ButtonCenter>
+                            <Button style={{marginRight : "5px"}} type="primary" 
+                                    disabled = {id ? false : true}
+                                    onClick={onClickCustomerSave}>보호자 정보 수정</Button>
+                        </ButtonCenter>
                     </Col>
                     <Col span={14} style={{border: "1px solid #f0f0f0"}}>
                         <CardDiv>
@@ -736,9 +831,6 @@ export default function Home(){
                         </Card>
                     </Col>
                 </Row>
-                <div style={{textAlign : "center", margin : "5px 0px 10px"}}>
-                    <Button style={{marginRight : "5px"}} type="primary" onChange={beauty_memo_change} onClick={clickSaveDate}>저장</Button>
-                </div>
             </SpinStyle>
         </MainDiv>
         </>

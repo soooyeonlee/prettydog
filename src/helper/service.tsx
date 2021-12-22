@@ -32,7 +32,7 @@ export default async function service(url:string, method:Method, requestData:any
     AxiosConfig.baseURL = BASE_URL;
     AxiosConfig.method = method;
     AxiosConfig.url = url;
-    //AxiosConfig.params = requestData;
+    AxiosConfig.params = requestData;
     AxiosConfig.data = params;
     AxiosConfig.headers = headerObject;
     await axios.request(AxiosConfig)
