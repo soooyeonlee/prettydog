@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import imageCompression from 'browser-image-compression'; 
 import { ButtonDiv, CardPopupDiv, PetInnerDiv, PetModalDiv, SpinStyle } from "./StyleComponet";
@@ -68,7 +69,7 @@ export default function PetEnrollPopup(props : {ClosePetEnroll : () => void, sho
  
     useEffect(() => {
         if(file) //처음 파일 등록하지 않았을 때를 방지
-        setPreview(<img className='img_preview' src={previewURL}></img>);
+        setPreview(<img className='img_preview' src={previewURL} alt="프로필이미지"></img>);
         return () => {
  
         }

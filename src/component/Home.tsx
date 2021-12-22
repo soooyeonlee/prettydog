@@ -462,7 +462,7 @@ export default function Home(){
         <>
         <OwnerSearchPopup CloseOwnerSearchPopup={CloseOwnerSearchPopup} showOwnerSearchPopup={showOwnerSearchPopup} setGogekId={setGogekId} setPetId={setPetId}/>
         <BuyListPopup CloseBuyListPopup={CloseBuyListPopup} showBuyListPopup={showBuyListPopup}/>
-        <CutHistoryPopup CloseCutHistoryPopup={CloseCutHistoryPopup} showCutHistoryPopup={showCutHistoryPopup}/>
+        <CutHistoryPopup CloseCutHistoryPopup={CloseCutHistoryPopup} showCutHistoryPopup={showCutHistoryPopup} petId={pet_id}/>
         <BuyDetailPopup CloseBuyDetailPopup={CloseBuyDetailPopup} showBuyDetailPopup={showBuyDetailPopup}/>
         <BlackListPopup CloseBlackListPopup={CloseBlackListPopup} showBlackListPopup={showBlackListPopup}/>
         <CustomerEnrollPopup CloseCustomerEnroll={CloseCustomerEnroll} showCustomerEnrollPopup={showCustomerEnrollPopup} setGogekId={setGogekId}/>
