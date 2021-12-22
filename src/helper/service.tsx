@@ -40,6 +40,7 @@ export default async function service(url:string, method:Method, requestData:any
                 res = response;
             })
             .catch(function (error){
+                alert("서버에 오류가 발생 했습니다.");
                 Object(res).status = -1;
                 Object(res).error = error;
             });

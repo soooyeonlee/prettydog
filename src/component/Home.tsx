@@ -31,6 +31,7 @@ export default function Home(){
     const [id, setGogekId] = useState<string>('');
     const [pet_id, setPetId] = useState<string>('');
     const [dogdata, set_dogdata] = useState<Array<Object>>([]);
+    const [beautyData, set_beautyData] = useState<Array<Object>>([]);
 
     const [m_name, set_m_name] = useState<string>('');
     const [m_hp_no, set_m_hp_no] = useState<string>('');
@@ -53,6 +54,8 @@ export default function Home(){
     const [pic_url,set_pic_url] = useState<string>('');
     const [birth_day_str,set_birth_day_str] = useState<string>('');
     const [age, set_age] = useState<number>();
+
+    const [beautyMemo, setBeautyMemo] = useState<string>('');
 
     const [file, setFile] = useState<File>();
     const [previewURL, setPreviewURL] = useState<any>();
@@ -183,9 +186,49 @@ export default function Home(){
                 if(Object(result.data).data.birth_day){
                     set_birth_day(moment(Object(result.data).data.birth_day));
                 }
+                BeautyList(pet_id);
             }
         }
+    }
 
+    /**
+     * 미용정보 세팅 (서버호출)
+     */
+     const BeautyList = async(pet_id : string) => {
+        setBeautyMemo('');
+        set_beautyData([]);
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/profile/' + pet_id + '/beauty/','GET', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            if(Object(result.data).data){
+                set_beautyData(Object(result.data).data);
+            }
+        }
+    }
+
+    /**
+     * 미용테이블 클릭 시 애견정보 세팅
+     */
+     const beautyRowClick = (record : Object) => {
+         //profile_id
+        BeautyInfo(Object(record).profile_id, Object(record).id);
+    }
+
+    /**
+     * 미용정보 세팅 (서버호출)
+     */
+     const BeautyInfo = async(pet_id : string, beauty_id : string) => {
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/profile/' + pet_id + '/beauty/' + beauty_id,'GET', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            if(Object(result.data).data){
+                setBeautyMemo(Object(result.data).data.memo);
+            }
+        }
     }
 
     /**
@@ -273,6 +316,10 @@ export default function Home(){
         setShowBlackListPopup(false);
     }
 
+    const CloseBeautyList = (_petId:string) =>{
+        BeautyList(_petId)
+    }
+
     /**
      * 값 입력
      */
@@ -327,6 +374,10 @@ export default function Home(){
 
     const memo_change = (event : ChangeEvent<HTMLTextAreaElement>) => {
         set_memo(event.target.value);
+    }
+
+    const beauty_memo_change = (event : ChangeEvent<HTMLTextAreaElement>) => {
+        setBeautyMemo(event.target.value);
     }
 
     const kind_nm_change = (event : ChangeEvent<HTMLInputElement>) => {
@@ -446,23 +497,16 @@ export default function Home(){
     const cutInfoColumns = [
         {
             title : "미용 날짜",
-            dataIndex : "cut_date",
-            key : "cut_date"
+            dataIndex : "beauty_date",
+            key : "beauty_date"
         }
-    ]
-
-    const cutdata = [
-        {
-            key: '1',
-            cut_date : '2021-09-13'
-        }
-    ]
+    ];
 
     return(
         <>
         <OwnerSearchPopup CloseOwnerSearchPopup={CloseOwnerSearchPopup} showOwnerSearchPopup={showOwnerSearchPopup} setGogekId={setGogekId} setPetId={setPetId}/>
         <BuyListPopup CloseBuyListPopup={CloseBuyListPopup} showBuyListPopup={showBuyListPopup}/>
-        <CutHistoryPopup CloseCutHistoryPopup={CloseCutHistoryPopup} showCutHistoryPopup={showCutHistoryPopup} petId={pet_id}/>
+        <CutHistoryPopup CloseCutHistoryPopup={CloseCutHistoryPopup} showCutHistoryPopup={showCutHistoryPopup} petId={pet_id} closeSendList={CloseBeautyList}/>
         <BuyDetailPopup CloseBuyDetailPopup={CloseBuyDetailPopup} showBuyDetailPopup={showBuyDetailPopup}/>
         <BlackListPopup CloseBlackListPopup={CloseBlackListPopup} showBlackListPopup={showBlackListPopup}/>
         <CustomerEnrollPopup CloseCustomerEnroll={CloseCustomerEnroll} showCustomerEnrollPopup={showCustomerEnrollPopup} setGogekId={setGogekId}/>
@@ -665,29 +709,35 @@ export default function Home(){
                                     type="primary"
                                     style={{marginLeft : "5px"}}
                                     icon={<PlusCircleOutlined/>}
-                                    onClick={OpenCutHistoryPopup}/>
+                                    onClick={OpenCutHistoryPopup}
+                                    disabled = {pet_id ? false : true}/>
                         </CardDiv>
                         <Card size="small" bordered={false}>
                             <div style={{display : "flex",width : "100%"}}>
-                                <Col span={4}>
+                                <Col span={5}>
                                     <Table
                                     size="small"
                                     pagination={false}
                                     columns={cutInfoColumns}
-                                    dataSource = {cutdata}
+                                    dataSource = {beautyData}
                                     scroll={{ y: 150 }}
                                     style={{cursor : "pointer"}}
+                                    onRow={(record, rowIndex)=>{
+                                        return{
+                                            onClick : event => {beautyRowClick(record)}
+                                        }
+                                    }}
                                     />
                                 </Col>
                                 <Col span={20} style={{textAlign : "center"}}>
-                                    <TextArea  rows={7} style={{width : "90%"}}/>
+                                    <TextArea  rows={7} style={{width : "90%"}}  value={beautyMemo}/>
                                 </Col>
                             </div>
                         </Card>
                     </Col>
                 </Row>
                 <div style={{textAlign : "center", margin : "5px 0px 10px"}}>
-                    <Button style={{marginRight : "5px"}} type="primary" onClick={clickSaveDate}>저장</Button>
+                    <Button style={{marginRight : "5px"}} type="primary" onChange={beauty_memo_change} onClick={clickSaveDate}>저장</Button>
                 </div>
             </SpinStyle>
         </MainDiv>

@@ -12,7 +12,6 @@ export default function CustomerEnrollPopup(props : {CloseCustomerEnroll : () =>
     const [m_hp_no, set_m_hp_no] = useState<string>('');
     const [m_gender, set_m_gender] = useState<string>('');
     const [m_addr1, set_m_addr1] = useState<string>('');
-    const [m_addr2, set_m_addr2] = useState<string>('');
     const [s_name, set_s_name] = useState<string>('');
     const [s_hp_no, set_s_hp_no] = useState<string>('');
     const [s_gender, set_s_gender] = useState<string>('');
@@ -41,7 +40,6 @@ export default function CustomerEnrollPopup(props : {CloseCustomerEnroll : () =>
         set_m_hp_no('');
         set_m_gender('');
         set_m_addr1('');
-        set_m_addr2('');
         set_s_name('');
         set_s_hp_no('');
         set_s_gender('');
@@ -69,10 +67,6 @@ export default function CustomerEnrollPopup(props : {CloseCustomerEnroll : () =>
 
     const m_addr1_change = (event : ChangeEvent<HTMLInputElement>) => {
         set_m_addr1(event.target.value);
-    }
-
-    const m_addr2_change = (event : ChangeEvent<HTMLInputElement>) => {
-        set_m_addr2(event.target.value);
     }
 
     const s_name_change = (event : ChangeEvent<HTMLInputElement>) => {
