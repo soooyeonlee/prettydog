@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig, AxiosRequestHeaders, Method } from "axios";
 
 
-//const BASE_URL:string = "http://146.56.148.229/api/";
-const BASE_URL:string = "http://prettydog.test/api/";
+const BASE_URL:string|undefined = process.env.REACT_APP_API_URL;
+//const BASE_URL:string = "http://prettydog.test/api/";
 
 export interface ResponseDatas {
     status? : number,
@@ -32,8 +32,11 @@ export default async function service(url:string, method:Method, requestData:any
     AxiosConfig.baseURL = BASE_URL;
     AxiosConfig.method = method;
     AxiosConfig.url = url;
-    AxiosConfig.params = requestData;
-    AxiosConfig.data = params;
+    if(method === 'POST'){
+        AxiosConfig.data = params;
+    }else{
+        AxiosConfig.params = requestData;
+    }
     AxiosConfig.headers = headerObject;
     await axios.request(AxiosConfig)
             .then(function (response){

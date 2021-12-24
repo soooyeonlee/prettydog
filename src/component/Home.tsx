@@ -73,8 +73,8 @@ export default function Home(){
     },[birth_day]);
 
     useEffect(()=>{
-        setClearClient();
-        seProfileClear();
+        clearClient();
+        clearProfile();
         if(id){
             SetGogekInfo(id);
         }
@@ -82,13 +82,29 @@ export default function Home(){
     },[id])
 
     useEffect(()=>{
-        seProfileClear();
+        clearProfile();
         if(pet_id){
             SetPetInfo(pet_id);
         }
     },[pet_id]);
 
-    const setClearClient = () =>{
+    /**
+     * 전체 초기화
+     */
+
+    const clearAll = () =>{        
+        setGogekId('');
+        setPetId('');
+        clearClient();
+        clearBeauty();
+        clearProfile();
+    }
+
+    /**
+     * 고객프로필 셋팅 초기화
+     */
+    const clearClient = () =>{
+        setPetId('');
         set_dogdata([]);
         set_m_name('');
         set_m_hp_no('');
@@ -103,7 +119,11 @@ export default function Home(){
         set_late('');
         set_memo('');
     }
-    const seProfileClear = () =>{
+
+    /**
+     * 애견프로필 셋팅 초기화
+     */
+    const clearProfile = () =>{
         set_kind_nm('');
         set_name('');
         set_gender_cd('');
@@ -114,52 +134,11 @@ export default function Home(){
     };
 
     /**
-     * 저장 후 고객정보  세팅
+     * 미용정보 초기화
      */
-    const SetGogekInfo = async(id : string) => {
-        let params:object = {};
-        setLoading(true);
-        let result:ResponseDatas = await service('/client/' + id,'GET', params);
-        setLoading(false);
-        if(result.status === 200 && result.data){
-            if(Object(result.data).data.client){
-                set_m_name(Object(result.data).data.client.m_name);
-                set_m_hp_no(Object(result.data).data.client.m_hp_no);
-                set_m_gender(Object(result.data).data.client.m_gender);
-                set_m_addr1(Object(result.data).data.client.m_addr1);
-                set_m_addr2('');
-                set_s_name(Object(result.data).data.client.s_name);
-                set_s_hp_no(Object(result.data).data.client.s_hp_no);
-                set_s_gender(Object(result.data).data.client.s_gender);
-                set_black_yb(Object(result.data).data.client.black_yb);
-
-                if(Object(result.data).data.client.black_yb === '1'){
-                    set_black_yb_chk(true);
-                }else{
-                    set_black_yb_chk(false);   
-                }
-                
-                set_noshow(Object(result.data).data.client.late);
-                set_late(Object(result.data).data.client.noshow);
-                set_memo(Object(result.data).data.client.memo);
-            }
-        }
-    }
-
-    /**
-     * 애견 정보 저장 후 값 세팅
-     */
-    const SetPetInfo = async(pet_id : string) => {
-        let params:object = {};
-        setLoading(true);
-        let result:ResponseDatas = await service('/client/' + id + '/profile','GET', params);
-        setLoading(false);
-        if(result.status === 200 && result.data){
-            if(Object(result.data).data){
-                set_dogdata(Object(result.data).data);
-                PetInfo(pet_id);
-            }
-        }
+    const clearBeauty = () => {
+        setBeautyMemo('');
+        set_beautyData([]);
     }
 
     /**
@@ -171,49 +150,33 @@ export default function Home(){
     }
 
     /**
-     * 애견정보 세팅 (서버호출)
+     * 애견 프로필 수정 클릭이벤트
      */
-    const PetInfo = async(pet_id : string) => {
-        let params:object = {};
-        setLoading(true);
-        let result:ResponseDatas = await service('/client/' + id + '/profile/' + pet_id,'GET', params);
-        setLoading(false);
-        if(result.status === 200 && result.data){
-            if(Object(result.data).data){
-                set_kind_nm(Object(result.data).data.kind_nm);
-                set_name(Object(result.data).data.name);
-                set_gender_cd(Object(result.data).data.gender_cd);
-                if(Object(result.data).data.pic_upload){
-                    setPreview(<img className='img_preview' src={'http://prettydog.test'+Object(result.data).data.pic_upload} alt='url'></img>);
-                }else{
-                    setPreview(<div></div>);
-                }
-                
-                //setPreviewURL('http://prettydog.test'+Object(result.data).data.pic_upload);
-                if(Object(result.data).data.birth_day){
-                    set_birth_day(moment(Object(result.data).data.birth_day));
-                }
-                BeautyList(pet_id);
+     const onClickPetSave = () => {
+        Modal.confirm({
+            title: '저장',
+            content: '저장하시겠습니까?',
+            okText: '확인',
+            cancelText: '취소',
+            onOk() {
+                sendPetUpdate(id, pet_id);
             }
-        }
+        });
     }
 
-    /**
-     * 미용정보 세팅 (서버호출)
-     */
-     const BeautyList = async(pet_id : string) => {
-        setBeautyMemo('');
-        set_beautyData([]);
-        let params:object = {};
-        setLoading(true);
-        let result:ResponseDatas = await service('/profile/' + pet_id + '/beauty/','GET', params);
-        setLoading(false);
-        if(result.status === 200 && result.data){
-            if(Object(result.data).data){
-                set_beautyData(Object(result.data).data);
+    const onClickCustomerSave = () => {
+        Modal.confirm({
+            title: '저장',
+            content: '저장하시겠습니까?',
+            okText: '확인',
+            cancelText: '취소',
+            onOk() {
+                sendCustomerUpdate(id);
             }
-        }
+        });
     }
+
+    
 
     /**
      * 미용테이블 클릭 시 애견정보 세팅
@@ -224,19 +187,36 @@ export default function Home(){
     }
 
     /**
-     * 미용정보 세팅 (서버호출)
+     * 보호자 프로필 삭제 클릭 이벤트
      */
-     const BeautyInfo = async(pet_id : string, beauty_id : string) => {
-        let params:object = {};
-        setLoading(true);
-        let result:ResponseDatas = await service('/profile/' + pet_id + '/beauty/' + beauty_id,'GET', params);
-        setLoading(false);
-        if(result.status === 200 && result.data){
-            if(Object(result.data).data){
-                setBeautyMemo(Object(result.data).data.memo);
+       const onClickClientDelete = () => {
+        Modal.confirm({
+            title: '저장',
+            content: '삭제하시겠습니까?',
+            okText: '확인',
+            cancelText: '취소',
+            onOk() {
+                sendClientDelete();
             }
-        }
+        });
     }
+
+    /**
+     * 애견 프로필 삭제 클릭 이벤트
+     */
+     const onClickPetProfileDelete = () => {
+        Modal.confirm({
+            title: '저장',
+            content: '삭제하시겠습니까?',
+            okText: '확인',
+            cancelText: '취소',
+            onOk() {
+                sendPetProfileDelete();
+            }
+        });
+    }
+
+    
 
     /**
      * 보호자,강아지 검색 팝업
@@ -346,10 +326,6 @@ export default function Home(){
         set_m_addr1(event.target.value);
     }
 
-    const m_addr2_change = (event : ChangeEvent<HTMLInputElement>) => {
-        set_m_addr2(event.target.value);
-    }
-
     const s_name_change = (event : ChangeEvent<HTMLInputElement>) => {
         set_s_name(event.target.value);
     }
@@ -403,18 +379,111 @@ export default function Home(){
         set_birth_day(date);
     }
 
-    const onClickCustomerSave = () => {
-        Modal.confirm({
-            title: '저장',
-            content: '저장하시겠습니까?',
-            okText: '확인',
-            cancelText: '취소',
-            onOk() {
-                sendCustomerUpdate(id);
+
+    /**
+     * 저장 후 고객정보  세팅
+     */
+     const SetGogekInfo = async(id : string) => {
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/client/' + id,'GET', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            if(Object(result.data).data.client){
+                set_m_name(Object(result.data).data.client.m_name);
+                set_m_hp_no(Object(result.data).data.client.m_hp_no);
+                set_m_gender(Object(result.data).data.client.m_gender);
+                set_m_addr1(Object(result.data).data.client.m_addr1);
+                set_m_addr2('');
+                set_s_name(Object(result.data).data.client.s_name);
+                set_s_hp_no(Object(result.data).data.client.s_hp_no);
+                set_s_gender(Object(result.data).data.client.s_gender);
+                set_black_yb(Object(result.data).data.client.black_yb);
+
+                if(Object(result.data).data.client.black_yb === '1'){
+                    set_black_yb_chk(true);
+                }else{
+                    set_black_yb_chk(false);   
+                }
+                
+                set_noshow(Object(result.data).data.client.late);
+                set_late(Object(result.data).data.client.noshow);
+                set_memo(Object(result.data).data.client.memo);
             }
-        });
+        }
     }
 
+    /**
+     * 애견 정보 저장 후 값 세팅
+     */
+     const SetPetInfo = async(pet_id : string = '') => {
+        clearProfile();
+
+        setBeautyMemo('');
+        set_beautyData([]);
+
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/client/' + id + '/profile','GET', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            if(Object(result.data).data){
+                set_dogdata(Object(result.data).data);
+                if(pet_id){
+                    PetInfo(pet_id);
+                }
+            }
+        }
+    }
+
+    /**
+     * 애견정보 세팅 (서버호출)
+     */
+     const PetInfo = async(pet_id : string) => {
+        setPetId(pet_id);
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/client/' + id + '/profile/' + pet_id,'GET', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            if(Object(result.data).data){
+                let profile:Object = Object(result.data).data.profile;
+                let beauty:Object = Object(result.data).data.beauty;
+                set_kind_nm(Object(profile).kind_nm);
+                set_name(Object(profile).name);
+                set_gender_cd(Object(profile).gender_cd);
+                if(Object(profile).pic_upload){
+                    setPreview(<img className='img_preview' src={Object(profile).pic_upload} alt='url'></img>);
+                }else{
+                    setPreview(<div></div>);
+                }
+
+                if(Object(profile).birth_day){
+                    set_birth_day(moment(Object(profile).birth_day));
+                }
+
+                if(beauty){
+                    set_beautyData(Object(beauty));
+                }
+            }
+        }
+    }
+
+    /**
+     * 미용정보 세팅 (서버호출)
+     */
+     const BeautyList = async(pet_id : string) => {
+        clearBeauty();
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/profile/' + pet_id + '/beauty/','GET', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            if(Object(result.data).data){
+                set_beautyData(Object(result.data).data);
+            }
+        }
+    }
     /**
      * 고객정보 수정
      */
@@ -445,19 +514,6 @@ export default function Home(){
         }
     }
 
-
-    const onClickPetSave = () => {
-        Modal.confirm({
-            title: '저장',
-            content: '저장하시겠습니까?',
-            okText: '확인',
-            cancelText: '취소',
-            onOk() {
-                sendPetUpdate(id, pet_id);
-            }
-        });
-    }
-
     /**
      * 애견정보 수정
      */
@@ -471,13 +527,59 @@ export default function Home(){
         };
 
         setLoading(true);
-        let result:ResponseDatas = await service('/client/' + _id + '/profile/' + _petId, 'PUT', params);
+        let result:ResponseDatas = await service('/client/' + _id + '/profile/' + _petId, 'POST', params);
         setLoading(false);
         if(result.status === 200 && result.data){
             
             if(Object(result.data).data.id){
                 alert('정상적으로 저장 완료 ID='+ Object(result.data).data.id);
             }
+        }
+    }
+
+    /**
+     * 미용정보 세팅 (서버호출)
+     */
+     const BeautyInfo = async(pet_id : string, beauty_id : string) => {
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/profile/' + pet_id + '/beauty/' + beauty_id,'GET', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+            if(Object(result.data).data){
+                setBeautyMemo(Object(result.data).data.memo);
+            }
+        }
+    }
+    
+
+    /**
+     * 보호자 프로필 삭제
+     */
+     const sendClientDelete = async() => {
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/client/' + id ,'DELETE', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+           alert('삭제 완료');
+           clearAll();
+           //SetPetInfo();
+        }
+    }
+
+    /**
+     * 애견 프로필 삭제
+     */
+    const sendPetProfileDelete = async() => {
+        let params:object = {};
+        setLoading(true);
+        let result:ResponseDatas = await service('/client/' + id + '/profile/'+ pet_id,'DELETE', params);
+        setLoading(false);
+        if(result.status === 200 && result.data){
+           alert('삭제 완료');
+           setPetId('');
+           SetPetInfo();
         }
     }
 
@@ -519,34 +621,6 @@ export default function Home(){
             })
         }catch(error){
             console.log(error);
-        }
-    }
-
-    /**
-     * 저장버튼 클릭
-     */
-    const clickSaveDate = () => {
-        sendSaveDate();
-    }
-
-    const sendSaveDate = async() =>{
-        let params:object = {
-            m_name : '고객명',
-            m_hp_no : '01012345678',
-            m_gender : '1',
-            m_addr1 : '주소1',
-            m_addr2 : '주소2',
-            s_name : '고객명2',
-            s_hp_no : '01012345678',
-            s_gender : '1',
-            black_yb : '',
-            noshow : '1',
-            late : '2',
-            memo : '메모',
-        }
-        let result:ResponseDatas = await service('/client','POST', params);
-        if(Object(result.data).data){
-            //Object(result.data).data.id  // 고객ID
         }
     }
 
@@ -601,7 +675,6 @@ export default function Home(){
             <SpinStyle spinning={loading}>
                 <MainHeader>
                     이뻐진개
-                    <img style={{maxHeight : "100%", maxWidth : "100%"}} alt="로고" src={logo}></img>
                 </MainHeader>
                 <MenuDiv style={{display : 'none'}}>
                     <Menu mode="horizontal" style={{width :"100%"}}>
@@ -626,7 +699,7 @@ export default function Home(){
                 <Row>
                     <Col span={10} style={{border: "1px solid #f0f0f0"}}>
                         <CardDiv>보호자 프로필
-                            <Button icon={<DeleteOutlined />} type='primary' danger disabled = {id ? false : true}/>
+                            <Button icon={<DeleteOutlined />} type='primary' danger disabled = {id ? false : true} onClick={onClickClientDelete}/>
                         </CardDiv>
                         <Card size="small" bordered={false}>
                             <div style={{display : "flex", width : "100%"}}>
@@ -691,7 +764,7 @@ export default function Home(){
                     </Col>
                     <Col span={9} style={{border: "1px solid #f0f0f0"}}>
                         <CardDiv>강아지 프로필
-                            <Button icon={<DeleteOutlined />} type='primary' danger disabled={pet_id ? false : true}/>
+                            <Button icon={<DeleteOutlined />} type='primary' danger disabled={pet_id ? false : true} onClick={onClickPetProfileDelete}/>
                         </CardDiv>
                         <Card size="small" bordered={false}>
                             <div ref={imgRef} style={{marginBottom : "3px"}}><Button type="primary" onClick={clickUpload}>사진업로드</Button></div>

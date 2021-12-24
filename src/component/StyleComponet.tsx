@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import 'antd/dist/antd.css';
 import { Layout, Spin, Card} from 'antd';
+import titleLogo from '../img/title_logo.png';
 const { Header } = Layout;
 
 export const MainDiv = styled.div`
@@ -10,8 +11,12 @@ export const MainDiv = styled.div`
 `;
 
 export const MainHeader = styled(Header)`
-   background : rgb(227 240 254 / 95%);
-   text-align : right;
+   height: 155px;
+   background-image: url(${titleLogo});
+   background-position : center;
+   background-repeat : no-repeat;
+   background-color: #3EB8B4;
+   text-align : center;
 `;
 
 export const MenuDiv = styled.div`
